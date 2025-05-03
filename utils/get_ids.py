@@ -4,7 +4,7 @@ from unidecode import unidecode
 from utils.general import get_data_path
 
 
-def get_player_id(player_name: str, name_type: str, season: str) -> int:
+def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
     """
     Get the player ID from the player name.
     Args:
@@ -26,9 +26,10 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int:
     df = pd.read_csv(filepath)
     player_id = df.loc[df[name_type] == player_name, "id"]
     if player_id.empty:
-        raise ValueError(
-            f"Player {player_name} not found in the dataset for season {season}."
-        )  # Added season context
+        # raise ValueError(
+        #     f"Player {player_name} not found in the dataset for season {season}."
+        # )
+        return None
     return player_id.values[0]
 
 
