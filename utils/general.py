@@ -1,3 +1,8 @@
+import functools
+import os
+import time
+
+
 def get_pos_from_element_id(element_id: int) -> str:
     """
     Get the position of a player from their element id.
@@ -13,3 +18,32 @@ def get_pos_from_element_id(element_id: int) -> str:
 
     positions = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD", 5: "MGR"}
     return positions[element_id]
+
+
+def time_function(func):
+    """
+    A decorator that prints the execution time of the function it decorates.
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        # perf_counter is more precise than time.time()
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        elapsed_time = end_time - start_time
+        print(f"Function '{func.__name__}' executed in {elapsed_time:.4f} seconds")
+        return result
+
+    return wrapper
+
+
+# Get the directory where get_ids.py is located
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Get the project root directory (assuming utils is one level down from root)
+_PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, ".."))
+
+
+def get_data_path(season: str, filename: str) -> str:
+    """Constructs the absolute path to a data file in the mydata directory."""
+    return os.path.join(_PROJECT_ROOT, "mydata", season, filename)

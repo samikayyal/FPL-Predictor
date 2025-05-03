@@ -1,0 +1,2 @@
+SEASON: str = "2024-25"
+LAST_PLAYED_GAMEWEEK: int = 34

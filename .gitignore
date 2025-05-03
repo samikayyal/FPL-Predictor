@@ -1,3 +1,7 @@
 notes.txt
 data/
 not_needed/
+
+.venv
+__pycache__/
+utils/__pycache__/
