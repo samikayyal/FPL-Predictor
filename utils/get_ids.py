@@ -52,7 +52,7 @@ def get_player_name(player_id: int, season: str) -> str:
     return player_name.values[0]
 
 
-def get_team_id(team_name: str, name_type: str, season: str) -> int:
+def get_team_id(team_name: str, name_type: str, season: str) -> int | None:
     """
     Get the team ID from the team name.
     Args:
@@ -70,9 +70,10 @@ def get_team_id(team_name: str, name_type: str, season: str) -> int:
 
     team_id = df.loc[df[name_type] == team_name, "id"]
     if team_id.empty:
-        raise ValueError(
-            f"Team {team_name} not found in the dataset for season {season}."
-        )  # Added season context
+        # raise ValueError(
+        #     f"Team {team_name} not found in the dataset for season {season}."
+        # )
+        return None
     return team_id.values[0]
 
 
@@ -93,3 +94,28 @@ def get_team_name(team_id: int, season: str) -> str:
             f"Team ID {team_id} not found in the dataset for season {season}."
         )  # Added season context
     return team_name.values[0]
+
+
+def fbref_team_name_to_fpl_name(name: str) -> str:
+    """
+    Convert a team name from FBRef format to FPL format.
+    Args:
+        name (str): The team name in FBRef format.
+    Returns:
+        str: The team name in FPL format. If not found, returns the original name.
+    """
+    # Mapping of FBRef team names to FPL team names
+    fbref_to_fpl_mapping = {
+        "tottenham": "Spurs",
+        "nott'ham forest": "Nott'm Forest",
+        "newcastle utd": "Newcastle",
+        "manchester utd": "Man Utd",
+        "manchester city": "Man City",
+        "leicester city": "Leicester",
+        "ipswich town": "Ipswich",
+        # Add more mappings as needed
+    }
+
+    return fbref_to_fpl_mapping.get(
+        name.lower().strip(), name
+    )  # Return the original name if not found

@@ -4,6 +4,7 @@ import time
 
 import pandas as pd
 from selenium import webdriver
+from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -25,7 +26,11 @@ from utils.get_ids import get_player_id  # noqa: E402
 @time_function
 def scrape_fpl_data_website(season: str):
     service = Service()
-    chrome = webdriver.Chrome(service=service)
+    options = ChromeOptions()
+    options.add_argument("--headless")  # Run in headless mode (no GUI)
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    chrome = webdriver.Chrome(service=service, options=options)
     chrome.implicitly_wait(20)
     chrome.get("https://www.fpl-data.co.uk/statistics")
 

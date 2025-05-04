@@ -44,7 +44,7 @@ def get_gw_data(season: str):
         for game in data["history"]:
             gw_number = game["round"]
             player_id = game["element"]
-
+            
             player_data = {
                 "player_id": player_id,
                 "minutes": game["minutes"],
