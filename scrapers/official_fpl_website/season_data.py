@@ -1,8 +1,14 @@
+import os
+import sys
+
 import pandas as pd
 import requests
 from unidecode import unidecode
 
-from utils.general import time_function
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.append(project_root)
+
+from utils.general import get_data_path, time_function  # noqa: E402
 
 
 @time_function
@@ -20,12 +26,12 @@ def scrape_season_data(season: str):
 
     # Player IDs
     players_ids = pd.DataFrame(
-        players_data_df[["id", "first_name", "second_name", "web_name"]]
+        players_data_df[["id", "first_name", "second_name", "web_name", "team"]]
     )
     players_ids["full_name"] = (
         players_ids["first_name"] + " " + players_ids["second_name"]
     )
-    players_ids.to_csv(f"../../mydata/{season}/players_ids.csv", index=False)
+    players_ids.to_csv(get_data_path(season, "players_ids.csv"), index=False)
 
     # Team ids
     team_data = {}
@@ -39,7 +45,7 @@ def scrape_season_data(season: str):
     teams_df = pd.DataFrame.from_dict(team_data, orient="index")
     teams_df.reset_index(inplace=True)
     teams_df.rename(columns={"index": "id"}, inplace=True)
-    teams_df.to_csv(f"../../mydata/{season}/teams_ids.csv", index=False)
+    teams_df.to_csv(get_data_path(season, "teams_ids.csv"), index=False)
 
     # Get Players Season data
     players_data_df[players_data_df["id"] == 2].to_dict(orient="records")
@@ -103,5 +109,9 @@ def scrape_season_data(season: str):
     players_season_data["xGI"] = players_season_data["xGI"].astype(float)
 
     players_season_data.to_csv(
-        f"../../mydata/{season}/players_season_data.csv", index=False
+        get_data_path(season, "players_season_data.csv"), index=False
     )
+
+
+if __name__ == "__main__":
+    scrape_season_data("2024-25")
