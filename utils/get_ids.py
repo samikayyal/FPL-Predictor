@@ -131,6 +131,5 @@ def get_player_team(player_id: int, season: str) -> int:
         int: The team ID for current season.
     """
     player_ids_df = pd.read_csv(get_data_path(season, "players_ids.csv"))
-    print()
-    team_id = player_ids_df[[player_ids_df["id"] == player_id]].team.values[0]
-    return team_id
+    team_id = player_ids_df[player_ids_df["id"] == player_id].team.values[0]
+    return int(team_id)

@@ -67,6 +67,7 @@ def scrape_season_data(season: str):
                 "clean_sheets",
                 "goals_conceded",
                 "saves",
+                "bps",
                 # per 90 (Not expected data)
                 "goals_conceded_per_90",
                 # Expected data
