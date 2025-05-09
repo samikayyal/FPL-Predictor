@@ -11,18 +11,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from utils.general import get_data_path, time_function
-
 # Add the project root directory to the system path to import utils
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(project_root)
 
 from utils.constants import LAST_PLAYED_GAMEWEEK  # noqa: E402
+from utils.general import get_data_path, time_function  # noqa: E402
 from utils.get_ids import (  # noqa: E402
-    fbref_team_name_to_fpl_name,
+    external_team_name_to_fpl_name,
     get_fbref_player_id,
     get_match_gw,
-    get_player_id,
     get_team_id,
 )
 
@@ -182,7 +180,7 @@ def scrape_key_passes_data(
         )
 
         soup = BeautifulSoup(table.get_attribute("innerHTML"), "lxml")
-        rows = soup.find_all("tr")
+        rows = soup.find("tbody").find_all("tr")
 
         gws_data = {}  # gw: pd.DataFrame
         for row in rows:
@@ -194,40 +192,54 @@ def scrape_key_passes_data(
                 continue
 
             cells = row.find_all("td")
-
             home_team = cells[3].text.strip()
             away_team = cells[7].text.strip()
 
             home_id = get_team_id(
-                fbref_team_name_to_fpl_name(home_team), "name", season
+                external_team_name_to_fpl_name(home_team), "name", season
             )
             away_id = get_team_id(
-                fbref_team_name_to_fpl_name(away_team), "name", season
+                external_team_name_to_fpl_name(away_team), "name", season
             )
 
             gw = get_match_gw(home_id, away_id, season)
+            print(f"Processing {home_team} vs {away_team} in GW{gw}")
 
-            # if it says match report then the game is played
-            if cells[-2].text.strip() == "Match Report":
-                match_data = scrape_individual_match_data(
-                    f"https://fbref.com{cells[-2].find('a')['href']}",
-                    home_id,
-                    away_id,
-                    season,
-                )
-                match_data["gw"] = gw
+            try:
+                # if it says match report then the game is played
+                if cells[-2].text.strip() == "Match Report":
+                    match_data = scrape_individual_match_data(
+                        f"https://fbref.com{cells[-2].find('a')['href']}",
+                        home_id,
+                        away_id,
+                        season,
+                    )
+                    match_data["gw"] = gw
 
-                if gw not in gws_data:
-                    gws_data[gw] = match_data
-                else:
-                    gws_data[gw] = pd.concat([gws_data[gw], match_data])
+                    if gw not in gws_data:
+                        gws_data[gw] = match_data
+                    else:
+                        gws_data[gw] = pd.concat([gws_data[gw], match_data])
+            except Exception as e:
+                with open("error.txt", "a") as f:
+                    f.write(f"{home_team} vs {away_team} in GW{gw}\n")
+                    f.write(f"Error type: {type(e)}\n")
+                    f.write(f"Error message: {e}\n")
+                    f.write("\n")
 
     finally:
         browser.quit()
 
     for gw, df in gws_data.items():
+        if not os.path.exists(get_data_path(season, "fbref/gws")):
+            os.makedirs(get_data_path(season, "fbref/gws"))
         df.to_csv(get_data_path(season, f"fbref/gws/gw{gw}.csv"), index=False)
+        print(f"Saved GW{gw} data")
 
 
 if __name__ == "__main__":
-    scrape_key_passes_data()
+    scrape_key_passes_data(
+        gw_start=1,
+        gw_end=LAST_PLAYED_GAMEWEEK,
+        season="2024-25",
+    )

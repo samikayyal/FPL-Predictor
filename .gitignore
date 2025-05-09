@@ -1,9 +1,9 @@
 notes.txt
-data/
-not_needed/
 
 .venv
+
 __pycache__/
 utils/__pycache__/
+*/__pycache__/
 
 temp.py

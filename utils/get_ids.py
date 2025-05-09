@@ -97,16 +97,16 @@ def get_team_name(team_id: int, season: str) -> str:
     return team_name.values[0]
 
 
-def fbref_team_name_to_fpl_name(name: str) -> str:
+def external_team_name_to_fpl_name(name: str) -> str:
     """
-    Convert a team name from FBRef format to FPL format.
+    Convert a team name from an external source to FPL format.
     Args:
-        name (str): The team name in FBRef format.
+        name (str): The team name in an external source.
     Returns:
         str: The team name in FPL format. If not found, returns the original name.
     """
     # Mapping of FBRef team names to FPL team names
-    fbref_to_fpl_mapping = {
+    external_to_fpl_mapping = {
         "tottenham": "Spurs",
         "nott'ham forest": "Nott'm Forest",
         "newcastle utd": "Newcastle",
@@ -114,10 +114,14 @@ def fbref_team_name_to_fpl_name(name: str) -> str:
         "manchester city": "Man City",
         "leicester city": "Leicester",
         "ipswich town": "Ipswich",
+        "wolverhampton wanderers": "Wolves",
+        "nottingham forest": "Nott'm Forest",
+        "manchester united": "Man Utd",
+        "newcastle united": "Newcastle",
         # Add more mappings as needed
     }
 
-    return fbref_to_fpl_mapping.get(
+    return external_to_fpl_mapping.get(
         name.lower().strip(), name
     )  # Return the original name if not found
 

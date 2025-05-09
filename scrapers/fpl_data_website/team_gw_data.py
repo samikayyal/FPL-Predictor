@@ -12,6 +12,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from utils.get_ids import external_team_name_to_fpl_name, get_team_id
+
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(project_root)
 
@@ -154,6 +156,18 @@ def scrape_team_gw_data(
 
             # Convert the data to a DataFrame
             df = pd.DataFrame(data, columns=column_names)
+            df["team_id"] = (
+                df["Team"]
+                .apply(external_team_name_to_fpl_name)
+                .apply(get_team_id, args=("name", SEASON))
+                .astype(int)
+            )
+            df["vs_team_id"] = (
+                df["vs Team"]
+                .apply(external_team_name_to_fpl_name)
+                .apply(get_team_id, args=("name", SEASON))
+                .astype(int)
+            )
             df.to_csv(get_data_path(season, f"team_gws/gw{gw_num}.csv"), index=False)
 
             if gw_num < end_gw:
