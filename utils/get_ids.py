@@ -1,7 +1,7 @@
 import pandas as pd
-from unidecode import unidecode
+from rapidfuzz import fuzz, process
 
-from utils.general import get_data_path
+from utils.general import get_data_path, normalize_name
 
 
 def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
@@ -11,6 +11,7 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
         player_name (str): The player name.
         name_type (str): The type of name to search for. Must be one of ['web_name', 'first_name', 'second_name', 'full_name'].
         season (str): The season for which to get the player ID. must be in format like '2023-24'
+        fbref_name (bool): Whether the player name is in FBRef format.
     Returns:
         int: The player ID.
     """
@@ -20,7 +21,7 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
         )
 
     # Normalize the player name to handle special characters
-    player_name = unidecode(player_name)
+    player_name = normalize_name(player_name)
 
     filepath = get_data_path(season, "players_ids.csv")
     df = pd.read_csv(filepath)
@@ -133,3 +134,70 @@ def get_player_team(player_id: int, season: str) -> int:
     player_ids_df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     team_id = player_ids_df[player_ids_df["id"] == player_id].team.values[0]
     return int(team_id)
+
+
+def get_match_gw(home_team_id: int, away_team_id: int, season: str) -> int:
+    """
+    Get the gameweek of a match.
+    """
+    fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
+    match_gw = fixtures[
+        (fixtures["home_team_id"] == home_team_id)
+        & (fixtures["away_team_id"] == away_team_id)
+    ].gw.values[0]
+    return int(match_gw)
+
+
+def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | None:
+    """
+    Get the player ID from the player name.
+    Args:
+        player_name (str): The player name.
+        team_id (int): The team ID.
+        season (str): The season for which to get the player ID. must be in format like '2023-24'
+    Returns:
+        int: The player ID. If not found, returns None.
+    """
+    player_name = normalize_name(player_name)
+
+    filepath = get_data_path(season, "players_ids.csv")
+    df = pd.read_csv(filepath)
+    team_df = df[df["team"] == team_id]
+    if team_df.empty:
+        print(f"No player found for {player_name} in {season}.")
+        return None
+
+    FUZZY_THRESHOLD = 60  # mess with this
+
+    best_match = process.extractOne(
+        player_name,
+        team_df["full_name"],
+        scorer=fuzz.token_sort_ratio,
+        score_cutoff=FUZZY_THRESHOLD,
+    )
+
+    if best_match:
+        return team_df[team_df["full_name"] == best_match[0]].id.values[0]
+    else:
+        # try web_name
+        best_match = process.extractOne(
+            player_name,
+            team_df["web_name"],
+            scorer=fuzz.token_sort_ratio,
+            score_cutoff=FUZZY_THRESHOLD,
+        )
+        if best_match:
+            return team_df[team_df["web_name"] == best_match[0]].id.values[0]
+        else:
+            # try for all teams (use with caution)
+            FUZZY_THRESHOLD = 80  # Make this higher to be more strict
+            best_match = process.extractOne(
+                player_name,
+                df["full_name"],
+                scorer=fuzz.token_sort_ratio,
+                score_cutoff=FUZZY_THRESHOLD,
+            )
+            if best_match:
+                return df[df["full_name"] == best_match[0]].id.values[0]
+
+    return None

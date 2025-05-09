@@ -1,6 +1,9 @@
 import functools
 import os
+import re
 import time
+
+from unidecode import unidecode
 
 
 def get_pos_from_element_id(element_id: int) -> str:
@@ -52,3 +55,15 @@ _PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, ".."))
 def get_data_path(season: str, filename: str) -> str:
     """Constructs the absolute path to a data file in the mydata directory."""
     return os.path.join(_PROJECT_ROOT, "mydata", season, filename)
+
+
+def normalize_name(name: str) -> str:
+    if not isinstance(name, str):
+        return ""
+    name = unidecode(name)  # Remove accents (e.g., Ødegaard -> Odegaard)
+    name = name.lower()  # Lowercase
+    name = re.sub(
+        r"[^\w\s-]", "", name
+    )  # Remove special characters except hyphen and space
+    name = name.strip()  # Remove leading/trailing whitespace
+    return name

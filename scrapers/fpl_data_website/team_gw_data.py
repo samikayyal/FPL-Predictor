@@ -3,7 +3,6 @@ import sys
 import time
 
 import pandas as pd
-import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
@@ -17,12 +16,14 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 sys.path.append(project_root)
 
 
-from utils.constants import SEASON  # noqa: E402
+from utils.constants import LAST_PLAYED_GAMEWEEK, SEASON  # noqa: E402
 from utils.general import get_data_path, time_function  # noqa: E402
 
 
 @time_function
-def scrape_team_gw_data(start_gw: int, end_gw: int, season=SEASON) -> None:
+def scrape_team_gw_data(
+    start_gw: int = 1, end_gw: int = LAST_PLAYED_GAMEWEEK, season=SEASON
+) -> None:
     try:
         if start_gw < 1 or end_gw > 38 or start_gw > end_gw:
             raise ValueError("Invalid gameweek range. Must be between 1 and 38.")

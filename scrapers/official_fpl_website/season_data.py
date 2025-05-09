@@ -3,12 +3,11 @@ import sys
 
 import pandas as pd
 import requests
-from unidecode import unidecode
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(project_root)
 
-from utils.general import get_data_path, time_function  # noqa: E402
+from utils.general import get_data_path, normalize_name, time_function  # noqa: E402
 
 
 @time_function
@@ -20,9 +19,11 @@ def scrape_season_data(season: str):
 
     # Full raw player data
     players_data_df = pd.DataFrame(players_data)
-    players_data_df["first_name"] = players_data_df["first_name"].apply(unidecode)
-    players_data_df["second_name"] = players_data_df["second_name"].apply(unidecode)
-    players_data_df["web_name"] = players_data_df["web_name"].apply(unidecode)
+    players_data_df["first_name"] = players_data_df["first_name"].apply(normalize_name)
+    players_data_df["second_name"] = players_data_df["second_name"].apply(
+        normalize_name
+    )
+    players_data_df["web_name"] = players_data_df["web_name"].apply(normalize_name)
 
     # Player IDs
     players_ids = pd.DataFrame(
@@ -31,6 +32,7 @@ def scrape_season_data(season: str):
     players_ids["full_name"] = (
         players_ids["first_name"] + " " + players_ids["second_name"]
     )
+    print(players_ids.head())
     players_ids.to_csv(get_data_path(season, "players_ids.csv"), index=False)
 
     # Team ids
