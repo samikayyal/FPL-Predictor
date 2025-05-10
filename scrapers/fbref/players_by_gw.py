@@ -15,7 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(project_root)
 
-from utils.constants import LAST_PLAYED_GAMEWEEK  # noqa: E402
+from utils.constants import LAST_PLAYED_GAMEWEEK, SEASON  # noqa: E402
 from utils.general import get_data_path, time_function  # noqa: E402
 from utils.get_ids import (  # noqa: E402
     external_team_name_to_fpl_name,
@@ -25,8 +25,8 @@ from utils.get_ids import (  # noqa: E402
 )
 
 
-def scrape_individual_match_data(
-    url: str, home_team_id: int, away_team_id: int, season: str
+def __scrape_individual_match_data(
+    url: str, home_team_id: int, away_team_id: int, season: str, stat_type: str
 ) -> pd.DataFrame:
     hdf = None
     adf = None
@@ -55,22 +55,26 @@ def scrape_individual_match_data(
             # get team id
             # Extract Squad ID from div ID (e.g., all_player_stats_19538871 -> 19538871)
             squad_id = table_div.get("id", "").split("_")[-1]
+            if stat_type == "passing":
+                # get the filter switcher
+                filter_switcher_passing = match_report_browser.find_element(
+                    By.XPATH, f'//*[@id="all_player_stats_{squad_id}"]/div[7]/div[2]/a'
+                )
+                # scroll down to the filter switcher
+                match_report_browser.execute_script(
+                    "arguments[0].scrollIntoView(true);", filter_switcher_passing
+                )
+                time.sleep(1)  # Allow time for the scroll
+                filter_switcher_passing.click()
 
-            # get the filter switcher
-            filter_switcher = match_report_browser.find_element(
-                By.XPATH, f'//*[@id="all_player_stats_{squad_id}"]/div[7]/div[2]/a'
-            )
-            # scroll down to the filter switcher
-            match_report_browser.execute_script(
-                "arguments[0].scrollIntoView(true);", filter_switcher
-            )
-            time.sleep(1)  # Allow time for the scroll
-            filter_switcher.click()
-
-            time.sleep(2)  # Allow time for the filter to load
-            table_sel = match_report_browser.find_element(
-                By.ID, f"stats_{squad_id}_passing"
-            )
+                time.sleep(2)  # Allow time for the filter to load
+                table_sel = match_report_browser.find_element(
+                    By.ID, f"stats_{squad_id}_passing"
+                )
+            elif stat_type == "summary":
+                table_sel = match_report_browser.find_element(
+                    By.ID, f"stats_{squad_id}_summary"
+                )
 
             soup = BeautifulSoup(table_sel.get_attribute("innerHTML"), "lxml")
 
@@ -159,9 +163,21 @@ def scrape_individual_match_data(
 
 
 @time_function
-def scrape_key_passes_data(
-    gw_start=1, gw_end=LAST_PLAYED_GAMEWEEK, season: str = "2024-25"
+def scrape_match_data_players(
+    stat_type: str, gw_start: int = 1, gw_end: int = LAST_PLAYED_GAMEWEEK
 ) -> None:
+    """Scrape match data for players
+
+    Args:
+        stat_type (str): The type of stat to scrape. One of "passing", "summary" for now
+        gw_start (int, optional): The start gameweek to scrape. Defaults to 1.
+        gw_end (int, optional): The end gameweek to scrape. Defaults to LAST_PLAYED_GAMEWEEK.
+    """
+
+    if stat_type not in ["passing", "summary"]:
+        raise ValueError(f"Invalid stat type: {stat_type}")
+
+    season = SEASON
 
     service = Service()
     options = ChromeOptions()
@@ -208,11 +224,12 @@ def scrape_key_passes_data(
             try:
                 # if it says match report then the game is played
                 if cells[-2].text.strip() == "Match Report":
-                    match_data = scrape_individual_match_data(
+                    match_data = __scrape_individual_match_data(
                         f"https://fbref.com{cells[-2].find('a')['href']}",
                         home_id,
                         away_id,
                         season,
+                        stat_type,
                     )
                     match_data["gw"] = gw
 
@@ -232,13 +249,13 @@ def scrape_key_passes_data(
 
     for gw, df in gws_data.items():
         if not os.path.exists(get_data_path(season, "fbref/gws")):
-            os.makedirs(get_data_path(season, "fbref/gws"))
-        df.to_csv(get_data_path(season, f"fbref/gws/gw{gw}.csv"), index=False)
+            os.makedirs(get_data_path(season, "fbref/gws_passing"))
+        df.to_csv(get_data_path(season, f"fbref/gws_passing/gw{gw}.csv"), index=False)
         print(f"Saved GW{gw} data")
 
 
 if __name__ == "__main__":
-    scrape_key_passes_data(
+    scrape_match_data_players(
         gw_start=1,
         gw_end=LAST_PLAYED_GAMEWEEK,
         season="2024-25",

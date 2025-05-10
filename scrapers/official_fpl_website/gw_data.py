@@ -10,11 +10,13 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 sys.path.append(project_root)
 
 
+from utils.constants import SEASON  # noqa: E402
 from utils.general import get_data_path, time_function  # noqa: E402
 from utils.get_ids import get_player_name  # noqa: E402
 
-@time_function
-def get_gw_data(season: str):    
+
+@time_function # about 1476 seconds
+def scrape_gw_data_official_fpl_website(season: str):
     # player idlist
     players_ids = sorted(
         pd.read_csv(get_data_path(season, "players_ids.csv"))["id"].tolist()
@@ -23,7 +25,6 @@ def get_gw_data(season: str):
 
     gw_data: dict[int:list] = {gw_number: [] for gw_number in range(1, 39)}
 
-    
     for player_id in players_ids:
         # Add a delay to avoid overwhelming the server
         time.sleep(0.7)
@@ -44,7 +45,7 @@ def get_gw_data(season: str):
         for game in data["history"]:
             gw_number = game["round"]
             player_id = game["element"]
-            
+
             player_data = {
                 "player_id": player_id,
                 "minutes": game["minutes"],
@@ -74,3 +75,7 @@ def get_gw_data(season: str):
             if players:
                 df = pd.DataFrame(players)
                 df.to_csv(get_data_path(season, f"gws/gw{gw_number}.csv"), index=False)
+
+
+if __name__ == "__main__":
+    scrape_gw_data_official_fpl_website(SEASON)

@@ -15,7 +15,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(project_root)
 
-from utils.constants import LAST_PLAYED_GAMEWEEK  # noqa: E402
+from utils.constants import LAST_PLAYED_GAMEWEEK, SEASON  # noqa: E402
 from utils.general import (  # noqa: E402
     get_data_path,
     time_function,
@@ -184,3 +184,7 @@ def scrape_fpl_data_website(season: str):
 
     finally:
         chrome.quit()
+
+
+if __name__ == "__main__":
+    scrape_fpl_data_website(SEASON)
