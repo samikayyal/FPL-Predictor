@@ -15,7 +15,7 @@ from utils.general import get_data_path, time_function  # noqa: E402
 from utils.get_ids import get_player_name  # noqa: E402
 
 
-@time_function # about 1476 seconds
+@time_function  # 988 seconds
 def scrape_gw_data_official_fpl_website(season: str):
     # player idlist
     players_ids = sorted(
@@ -27,7 +27,7 @@ def scrape_gw_data_official_fpl_website(season: str):
 
     for player_id in players_ids:
         # Add a delay to avoid overwhelming the server
-        time.sleep(0.7)
+        time.sleep(0.5)
 
         response = requests.get(
             f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
@@ -74,7 +74,9 @@ def scrape_gw_data_official_fpl_website(season: str):
         for gw_number, players in gw_data.items():
             if players:
                 df = pd.DataFrame(players)
-                df.to_csv(get_data_path(season, f"gws/gw{gw_number}.csv"), index=False)
+                df.to_csv(
+                    get_data_path(season, "gws", f"gw{gw_number}.csv"), index=False
+                )
 
 
 if __name__ == "__main__":

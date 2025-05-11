@@ -3,6 +3,7 @@ import sys
 import time
 
 import pandas as pd
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
@@ -23,7 +24,7 @@ from utils.general import (  # noqa: E402
 from utils.get_ids import get_player_id  # noqa: E402
 
 
-@time_function
+@time_function  # 4577 seconds
 def scrape_fpl_data_website(season: str):
     service = Service()
     options = ChromeOptions()
@@ -59,16 +60,20 @@ def scrape_fpl_data_website(season: str):
 
             time.sleep(5)  # Wait for the stat table to load
 
+            table = chrome.find_element(
+                By.XPATH,
+                "/html/body/div/div/div[4]/div/div[14]/div[2]/div/div[2]/div[2]/table",
+            )
+
+            soup = BeautifulSoup(table.get_attribute("innerHTML"), "lxml")
+            rows = soup.find_all("tr")
+
             # Get table column names after Player
-            if not column_names:
-                for i in range(
-                    2, LAST_PLAYED_GAMEWEEK + 3
-                ):  # Starting from gw1 column to total column
-                    column_name = chrome.find_element(
-                        By.XPATH,
-                        f"/html/body/div/div/div[4]/div/div[14]/div[2]/div/div[2]/div[2]/table/tbody/tr[1]/th[{i}]/div/span",
-                    ).text
-                    column_names.append(column_name)
+            column_names = soup.find_all("span", class_="column-header-name")
+            column_names = [name.text.strip() for name in column_names]
+            if "Total" in column_names:
+                column_names.remove("Total")
+
             data = []
             page_num = 1
             max_pages = int(
@@ -79,7 +84,7 @@ def scrape_fpl_data_website(season: str):
             while page_num < max_pages:
                 page_start_time = time.time()
                 print(f"Page {page_num} of {max_pages}", end=" - ")
-                time.sleep(10)  # just to be sure the page is loaded
+                time.sleep(8)  # just to be sure the page is loaded
                 wait = WebDriverWait(chrome, 20)
                 table_element = wait.until(
                     EC.presence_of_element_located(
@@ -90,26 +95,14 @@ def scrape_fpl_data_website(season: str):
                     )
                 )
 
-                rows = table_element.find_elements(By.TAG_NAME, "tr")
+                soup = BeautifulSoup(table_element.get_attribute("innerHTML"), "lxml")
+                rows = soup.find_all("tr")
 
-                for i, row in enumerate(rows):
-                    if i == 0:
-                        continue
-                    cells = row.find_elements(By.TAG_NAME, "td")
+                for row in rows[1:]:
+                    cells = row.find_all("td")
                     row_data = [
-                        cell.text.strip()
-                        for col_num, cell in enumerate(cells)
-                        if col_num > 0
-                    ]
-
-                    player_name = chrome.find_element(
-                        By.XPATH,
-                        f"/html/body/div/div/div[4]/div/div[14]/div[2]/div/div[2]/div[1]/table/tbody/tr[{i+1}]/td[1]/div",
-                    ).text
-                    row_data.insert(
-                        0, player_name
-                    )  # Insert player name at the beginning of the row data
-
+                        cell.text.strip() for cell in cells[:-1]
+                    ]  # Don't include total column
                     data.append(row_data)
 
                 # next page button
@@ -120,9 +113,11 @@ def scrape_fpl_data_website(season: str):
                 next_button.click()
                 page_num += 1
                 page_end_time = time.time()
+
                 print(f"Took {page_end_time - page_start_time:.2f} seconds")
 
             df = pd.DataFrame(data, columns=["web_name"] + column_names)
+            print("shape of df before melting: ", df.shape)
             if "Total" in df.columns:
                 df.drop(columns=["Total"], inplace=True)
 
@@ -140,37 +135,49 @@ def scrape_fpl_data_website(season: str):
                 get_player_id, args=("web_name", season)
             )
 
-            # Merge into gw csv's
-            print(f"  Merging {statistic} into gameweek files...")
-            for gw_num in range(1, LAST_PLAYED_GAMEWEEK + 1):
-                gw_file_path = get_data_path(season, f"gws/gw{gw_num}.csv")
-                try:
-                    gw_df = pd.read_csv(gw_file_path)
+            print("shape of df_melted: ", df_melted.shape)
 
-                    # Filter the melted data for the current gameweek
-                    current_gw_stat_data = df_melted[df_melted["gw"] == gw_num]
+            if df_melted.duplicated(subset=["player_id", "gw"]).any():
+                print(
+                    f"Warning: Duplicated entries found in {statistic} data for player_id and gw."
+                )
+                df_melted.drop_duplicates(
+                    subset=["player_id", "gw"], inplace=True, keep="first"
+                )
 
-                    # Select only necessary columns for merging
-                    stat_to_merge = current_gw_stat_data[["player_id", statistic]]
+            if not os.path.exists(f"stat_data/{statistic}.csv"):
+                os.makedirs("stat_data", exist_ok=True)
+            df_melted.to_csv(f"stat_data/{statistic}.csv", index=False)
 
-                    # Perform the merge
-                    merged_df = pd.merge(
-                        gw_df, stat_to_merge, on="player_id", how="left"
-                    )
+            # # # Merge into gw csv's
+            # print(f"  Merging {statistic} into gameweek files...")
+            # for gw_num in range(1, LAST_PLAYED_GAMEWEEK + 1):
+            #     gw_file_path = get_data_path(season, f"gws/gw{gw_num}.csv")
+            #     try:
+            #         gw_df = pd.read_csv(gw_file_path)
 
-                    # Overwrite the gameweek file
-                    merged_df.to_csv(gw_file_path, index=False)
-                    print(f"    Updated {statistic} for GW{gw_num}")
-                except FileNotFoundError:
-                    print(
-                        f"    Warning: Gameweek file not found, skipping GW{gw_num}: {gw_file_path}"
-                    )
-                except Exception as e:
-                    print(
-                        f"    Warning: Error processing GW{gw_num} ({gw_file_path}): {e}"
-                    )
+            #         # Filter the melted data for the current gameweek
+            #         current_gw_stat_data = df_melted[df_melted["gw"] == gw_num]
 
-            print(f"Data for {statistic} collected and merged into all gameweek files.")
+            #         # Select only necessary columns for merging
+            #         stat_to_merge = current_gw_stat_data[["player_id", statistic]]
+
+            #         # Perform the merge
+            #         gw_df = pd.merge(gw_df, stat_to_merge, on="player_id", how="left")
+
+            #         # Overwrite the gameweek file
+            #         gw_df.to_csv(gw_file_path, index=False)
+            #         print(f"    Updated {statistic} for GW{gw_num}")
+            #     except FileNotFoundError:
+            #         print(
+            #             f"    Warning: Gameweek file not found, skipping GW{gw_num}: {gw_file_path}"
+            #         )
+            #     except Exception as e:
+            #         print(
+            #             f"    Warning: Error processing GW{gw_num} ({gw_file_path}): {e}"
+            #         )
+
+            # print(f"Data for {statistic} collected and merged into all gameweek files.")
             # Go back to the first page in the table
             back_button = chrome.find_element(
                 By.XPATH,

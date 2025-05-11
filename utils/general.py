@@ -52,9 +52,9 @@ _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, ".."))
 
 
-def get_data_path(season: str, filename: str) -> str:
+def get_data_path(season: str, *args) -> str:
     """Constructs the absolute path to a data file in the mydata directory."""
-    return os.path.join(_PROJECT_ROOT, "mydata", season, filename)
+    return os.path.join(_PROJECT_ROOT, "mydata", season, *args)
 
 
 def normalize_name(name: str) -> str:
