@@ -78,6 +78,12 @@ def scrape_gw_data_official_fpl_website(season: str):
                     get_data_path(season, "gws", f"gw{gw_number}.csv"), index=False
                 )
 
+        # To deal with double gameweeks, ill add a game count column
+        # for gw_number, players in gw_data.items():
+        #     df = pd.read_csv(get_data_path(season, "gws", f"gw{gw_number}.csv"))
+        #     df["game_count"] = df.groupby("player_id").cumcount() + 1
+        #     df.to_csv(get_data_path(season, "gws", f"gw{gw_number}.csv"), index=False)
+
 
 if __name__ == "__main__":
     scrape_gw_data_official_fpl_website(SEASON)

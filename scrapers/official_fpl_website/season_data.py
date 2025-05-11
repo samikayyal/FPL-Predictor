@@ -10,7 +10,7 @@ sys.path.append(project_root)
 from utils.general import get_data_path, normalize_name, time_function  # noqa: E402
 
 
-@time_function
+@time_function  # 0.8 seconds
 def scrape_season_data(season: str):
     response = requests.get("https://fantasy.premierleague.com/api/bootstrap-static/")
 
@@ -19,6 +19,7 @@ def scrape_season_data(season: str):
 
     # Full raw player data
     players_data_df = pd.DataFrame(players_data)
+    # print([col for col in players_data_df.columns])
     players_data_df["first_name"] = players_data_df["first_name"].apply(normalize_name)
     players_data_df["second_name"] = players_data_df["second_name"].apply(
         normalize_name
@@ -32,7 +33,6 @@ def scrape_season_data(season: str):
     players_ids["full_name"] = (
         players_ids["first_name"] + " " + players_ids["second_name"]
     )
-    print(players_ids.head())
     players_ids.to_csv(get_data_path(season, "players_ids.csv"), index=False)
 
     # Team ids
@@ -66,10 +66,14 @@ def scrape_season_data(season: str):
                 "goals_scored",
                 "assists",
                 "yellow_cards",
+                "red_cards",
                 "clean_sheets",
                 "goals_conceded",
                 "saves",
                 "bps",
+                "penalties_saved",
+                "penalties_missed",
+                "own_goals",
                 # per 90 (Not expected data)
                 "goals_conceded_per_90",
                 # Expected data
