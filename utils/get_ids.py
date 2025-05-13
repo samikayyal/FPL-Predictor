@@ -136,8 +136,14 @@ def get_player_team(player_id: int, season: str) -> int:
         int: The team ID for current season.
     """
     player_ids_df = pd.read_csv(get_data_path(season, "players_ids.csv"))
-    team_id = player_ids_df[player_ids_df["id"] == player_id].team.values[0]
-    return int(team_id)
+
+    team_id = player_ids_df[player_ids_df["id"] == player_id]
+
+    if team_id.empty:
+        raise ValueError(
+            f"Player ID {player_id} not found in the dataset for season {season}."
+        )
+    return int(team_id["team"].values[0])
 
 
 def get_match_gw(home_team_id: int, away_team_id: int, season: str) -> int:

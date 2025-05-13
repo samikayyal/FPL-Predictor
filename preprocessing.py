@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from utils.constants import LAST_PLAYED_GAMEWEEK, SEASON
+from utils.constants import SEASON
 from utils.general import get_data_path, time_function
 from utils.get_ids import external_team_name_to_fpl_name, get_player_team, get_team_id
 
@@ -85,24 +85,32 @@ def merge_all_gw_data(season: str = SEASON) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Merged DataFrame containing player statistics.
     """
+    print("Merging all gw data...")
 
     merged_stat_df = get_merged_stat_df(season)
     merged_gw_df = get_merged_gws_official_fpl(season)
     merged_passing_gw_df = get_merged_passing_gws_fbref(season)
 
     final_merged = pd.merge(
-        merged_stat_df,
         merged_gw_df,
+        merged_stat_df,
         on=["player_id", "gw"],
-        how="outer",
+        how="left",
     )
 
     final_merged = pd.merge(
         final_merged,
         merged_passing_gw_df,
         on=["player_id", "gw"],
-        how="outer",
+        how="left",
     )
+    final_merged["team_id"] = final_merged["player_id"].apply(
+        get_player_team, args=(season,)
+    )
+
+    final_merged.fillna(0, inplace=True)
+
+    return final_merged
 
 
 def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.DataFrame:
@@ -111,6 +119,7 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
     Returns:
         pd.DataFrame: DataFrame containing team statistics.
     """
+    print("Getting team stats...")
     gws_dfs: list[pd.DataFrame] = []
     for file in os.listdir(get_data_path(season, "team_gws")):
         if file.endswith(".csv"):
@@ -148,6 +157,12 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
             df["gw"] = int(file.split(".")[0][2:])
 
             gws_dfs.append(df)
+
+    if last_x_gameweeks > len(gws_dfs):
+        print(
+            f"Warning: last_x_gameweeks ({last_x_gameweeks}) is greater than the number of gameweeks available ({len(gws_dfs)}). Using all available gameweeks."
+        )
+        last_x_gameweeks = len(gws_dfs)
 
     last_x = pd.concat(gws_dfs[-last_x_gameweeks:], ignore_index=True)
 
@@ -204,10 +219,40 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
     return grouped
 
 
-@time_function
+@time_function  # 200 seconds
 def main():
     merged_gw = merge_all_gw_data(SEASON)
+
     team_stats = get_team_stats_df(SEASON, 10)
+    team_stats = team_stats[
+        ["team_id", "was_home"]
+        + [col for col in team_stats.columns if col not in merged_gw.columns]
+    ]
+
+    print("Merging team stats with merged_gw")
+    # Add team stats to merged_gw depending on home/away
+    merged_gw = pd.merge(
+        merged_gw,
+        team_stats,
+        on=["team_id", "was_home"],
+        how="left",
+    )
+
+    # Add season data to merged_gw
+    print("Merging season data with merged_gw")
+    season_data = pd.read_csv(get_data_path(SEASON, "players_season_data.csv"))
+
+    season_data.drop(columns=["team_id"], inplace=True)
+
+    merged_gw = pd.merge(
+        merged_gw,
+        season_data,
+        on=["player_id"],
+        how="left",
+        suffixes=("", "_season"),
+    )
+
+    merged_gw.to_csv("temp.csv", index=False)
 
 
 if __name__ == "__main__":
