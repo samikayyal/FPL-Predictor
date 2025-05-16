@@ -7,7 +7,6 @@ from utils.general import get_data_path, time_function
 from utils.get_ids import external_team_name_to_fpl_name, get_player_team, get_team_id
 
 
-# Merge stats from fpl-data into a single DataFrame
 def get_merged_stat_df(season: str = SEASON) -> pd.DataFrame:
     """
     Merges all CSV files in the stat_data directory into a single DataFrame,
@@ -229,6 +228,12 @@ def main():
         + [col for col in team_stats.columns if col not in merged_gw.columns]
     ]
 
+    # Rename columns to make team stats more readable
+    team_stats.columns = [
+        col + "_team" if col not in ["team_id", "was_home"] else col
+        for col in team_stats.columns
+    ]
+
     print("Merging team stats with merged_gw")
     # Add team stats to merged_gw depending on home/away
     merged_gw = pd.merge(
@@ -263,6 +268,10 @@ def main():
         on=["player_id"],
         how="left",
     )
+
+    # Drop columns with null values, these are all managers
+    merged_gw.dropna(inplace=True)
+    merged_gw.reset_index(drop=True, inplace=True)
 
     merged_gw.to_csv("merged_data.csv", index=False)
 

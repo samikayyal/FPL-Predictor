@@ -1,7 +1,13 @@
 import pandas as pd
 from rapidfuzz import fuzz, process
 
+from utils.constants import SEASON
 from utils.general import get_data_path, normalize_name
+
+# Preload CSVs for the current season to improve performance
+PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
+TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
+FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
 
 
 def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
@@ -23,8 +29,10 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
     # Normalize the player name to handle special characters
     player_name = normalize_name(player_name)
 
-    filepath = get_data_path(season, "players_ids.csv")
-    df = pd.read_csv(filepath)
+    if season == SEASON:
+        df = PLAYERS_IDS_DF
+    else:
+        df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     player_id = df.loc[df[name_type] == player_name, "id"]
     if player_id.empty:
         # raise ValueError(
@@ -43,8 +51,10 @@ def get_player_name(player_id: int, season: str) -> str:
     Returns:
         str: The player name as web_name.
     """
-    filepath = get_data_path(season, "players_ids.csv")
-    df = pd.read_csv(filepath)
+    if season == SEASON:
+        df = PLAYERS_IDS_DF
+    else:
+        df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     player_name = df.loc[df["id"] == player_id, "web_name"]
     if player_name.empty:
         raise ValueError(
@@ -66,8 +76,10 @@ def get_team_id(team_name: str, name_type: str, season: str) -> int | None:
     if name_type not in ["name", "short_name"]:
         raise ValueError("name_type must be one of ['name', 'short_name']")
 
-    filepath = get_data_path(season, "teams_ids.csv")
-    df = pd.read_csv(filepath)
+    if season == SEASON:
+        df = TEAMS_IDS_DF
+    else:
+        df = pd.read_csv(get_data_path(season, "teams_ids.csv"))
 
     team_id = df.loc[df[name_type] == team_name, "id"]
     if team_id.empty:
@@ -87,8 +99,10 @@ def get_team_name(team_id: int, season: str) -> str:
     Returns:
         str: The team name as full name.
     """
-    filepath = get_data_path(season, "teams_ids.csv")
-    df = pd.read_csv(filepath)
+    if season == SEASON:
+        df = TEAMS_IDS_DF
+    else:
+        df = pd.read_csv(get_data_path(season, "teams_ids.csv"))
     team_name = df.loc[df["id"] == team_id, "name"]
     if team_name.empty:
         raise ValueError(
@@ -135,7 +149,10 @@ def get_player_team(player_id: int, season: str) -> int:
     Returns:
         int: The team ID for current season.
     """
-    player_ids_df = pd.read_csv(get_data_path(season, "players_ids.csv"))
+    if season == SEASON:
+        player_ids_df = PLAYERS_IDS_DF
+    else:
+        player_ids_df = pd.read_csv(get_data_path(season, "players_ids.csv"))
 
     team_id = player_ids_df[player_ids_df["id"] == player_id]
 
@@ -150,7 +167,10 @@ def get_match_gw(home_team_id: int, away_team_id: int, season: str) -> int:
     """
     Get the gameweek of a match.
     """
-    fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
+    if season == SEASON:
+        fixtures = FIXTURES_DF
+    else:
+        fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
     match_gw = fixtures[
         (fixtures["home_team_id"] == home_team_id)
         & (fixtures["away_team_id"] == away_team_id)
@@ -170,8 +190,10 @@ def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | No
     """
     player_name = normalize_name(player_name)
 
-    filepath = get_data_path(season, "players_ids.csv")
-    df = pd.read_csv(filepath)
+    if season == SEASON:
+        df = PLAYERS_IDS_DF
+    else:
+        df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     team_df = df[df["team"] == team_id]
     if team_df.empty:
         print(f"No player found for {player_name} in {season}.")
@@ -211,3 +233,46 @@ def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | No
                 return df[df["full_name"] == best_match[0]].id.values[0]
 
     return None
+
+
+def get_opponent_team_id(
+    team_id: int,
+    gw: int,
+    season: str,
+):
+    if season == SEASON:
+        fixtures = FIXTURES_DF
+    else:
+        fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
+    desired_gw = fixtures[fixtures.gw == gw]
+    opponent_team_id = desired_gw[
+        (desired_gw.home_team_id == team_id) | (desired_gw.away_team_id == team_id)
+    ]
+    if opponent_team_id.empty:
+        return None  # Blank gameweek
+    if opponent_team_id.home_team_id.values[0] == team_id:
+        return opponent_team_id.away_team_id.values[0]
+
+    return opponent_team_id.home_team_id.values[0]
+
+
+def team_was_home(
+    team_id: int,
+    gw: int,
+    season: str,
+) -> bool:
+    if season == SEASON:
+        fixtures = FIXTURES_DF
+    else:
+        fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
+    desired_gw = fixtures[fixtures.gw == gw]
+
+    desired_gw = desired_gw[
+        (desired_gw.home_team_id == team_id) | (desired_gw.away_team_id == team_id)
+    ]
+    if desired_gw.empty:
+        return None  # Blank gameweek
+    if desired_gw.home_team_id.values[0] == team_id:
+        return True
+
+    return False
