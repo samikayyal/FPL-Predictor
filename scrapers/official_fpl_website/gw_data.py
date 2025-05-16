@@ -63,7 +63,7 @@ def scrape_gw_data_official_fpl_website(season: str):
                 # and others
                 "total_points": game["total_points"],
                 "gameweek": gw_number,
-                "oppeonent_team_id": game["opponent_team"],
+                "opponent_team_id": game["opponent_team"],
                 "fixture": game["fixture"],  # I still don't know what this is
                 "value": game["value"],  # Player price in that gameweek
             }

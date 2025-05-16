@@ -117,7 +117,6 @@ def scrape_fpl_data_website(season: str):
                 print(f"Took {page_end_time - page_start_time:.2f} seconds")
 
             df = pd.DataFrame(data, columns=["web_name"] + column_names)
-            print("shape of df before melting: ", df.shape)
             if "Total" in df.columns:
                 df.drop(columns=["Total"], inplace=True)
 
@@ -135,8 +134,6 @@ def scrape_fpl_data_website(season: str):
                 get_player_id, args=("web_name", season)
             )
 
-            print("shape of df_melted: ", df_melted.shape)
-
             if df_melted.duplicated(subset=["player_id", "gw"]).any():
                 print(
                     f"Warning: Duplicated entries found in {statistic} data for player_id and gw."
@@ -145,39 +142,12 @@ def scrape_fpl_data_website(season: str):
                     subset=["player_id", "gw"], inplace=True, keep="first"
                 )
 
-            if not os.path.exists(f"stat_data/{statistic}.csv"):
-                os.makedirs("stat_data", exist_ok=True)
-            df_melted.to_csv(f"stat_data/{statistic}.csv", index=False)
+            if not os.path.exists(get_data_path(season, "stat_data")):
+                os.makedirs(get_data_path(season, "stat_data"), exist_ok=True)
+            df_melted.to_csv(
+                get_data_path(season, f"stat_data/{statistic}.csv"), index=False
+            )
 
-            # # # Merge into gw csv's
-            # print(f"  Merging {statistic} into gameweek files...")
-            # for gw_num in range(1, LAST_PLAYED_GAMEWEEK + 1):
-            #     gw_file_path = get_data_path(season, f"gws/gw{gw_num}.csv")
-            #     try:
-            #         gw_df = pd.read_csv(gw_file_path)
-
-            #         # Filter the melted data for the current gameweek
-            #         current_gw_stat_data = df_melted[df_melted["gw"] == gw_num]
-
-            #         # Select only necessary columns for merging
-            #         stat_to_merge = current_gw_stat_data[["player_id", statistic]]
-
-            #         # Perform the merge
-            #         gw_df = pd.merge(gw_df, stat_to_merge, on="player_id", how="left")
-
-            #         # Overwrite the gameweek file
-            #         gw_df.to_csv(gw_file_path, index=False)
-            #         print(f"    Updated {statistic} for GW{gw_num}")
-            #     except FileNotFoundError:
-            #         print(
-            #             f"    Warning: Gameweek file not found, skipping GW{gw_num}: {gw_file_path}"
-            #         )
-            #     except Exception as e:
-            #         print(
-            #             f"    Warning: Error processing GW{gw_num} ({gw_file_path}): {e}"
-            #         )
-
-            # print(f"Data for {statistic} collected and merged into all gameweek files.")
             # Go back to the first page in the table
             back_button = chrome.find_element(
                 By.XPATH,

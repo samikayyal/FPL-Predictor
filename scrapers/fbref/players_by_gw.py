@@ -219,6 +219,8 @@ def scrape_match_data_players(
             )
 
             gw = get_match_gw(home_id, away_id, season)
+            if gw < gw_start or gw > gw_end:
+                continue
             print(f"Processing {home_team} vs {away_team} in GW{gw}")
 
             try:
@@ -248,15 +250,15 @@ def scrape_match_data_players(
         browser.quit()
 
     for gw, df in gws_data.items():
-        if not os.path.exists(get_data_path(season, "fbref/gws")):
-            os.makedirs(get_data_path(season, "fbref/gws_passing"))
-        df.to_csv(get_data_path(season, f"fbref/gws_passing/gw{gw}.csv"), index=False)
+        if not os.path.exists(get_data_path(season, "fbref", "gws_passing")):
+            os.makedirs(get_data_path(season, "fbref", "gws_passing"))
+        df.to_csv(
+            get_data_path(season, "fbref", "gws_passing", f"gw{gw}.csv"), index=False
+        )
         print(f"Saved GW{gw} data")
 
 
 if __name__ == "__main__":
     scrape_match_data_players(
-        gw_start=1,
-        gw_end=LAST_PLAYED_GAMEWEEK,
-        season="2024-25",
+        gw_start=34, gw_end=LAST_PLAYED_GAMEWEEK, stat_type="passing"
     )

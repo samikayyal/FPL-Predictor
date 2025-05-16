@@ -1,4 +1,4 @@
-player_id,minutes,in_starting_xi,was_home,goals_scored,assists,goals_conceded,clean_sheets,xG,xA,xGC,xGI,total_points,gameweek,oppeonent_team_id,fixture,value
+player_id,minutes,in_starting_xi,was_home,goals_scored,assists,goals_conceded,clean_sheets,xG,xA,xGC,xGI,total_points,gameweek,opponent_team_id,fixture,value
 1,0,0,False,0,0,0,0,0.00,0.00,0.00,0.00,0,33,10,326,54
 1,0,0,True,0,0,0,0,0.00,0.00,0.00,0.00,0,33,7,331,54
 2,0,0,False,0,0,0,0,0.00,0.00,0.00,0.00,0,33,10,326,65
