@@ -329,6 +329,7 @@ def get_last_x_players_gw(
     Returns:
         pd.DataFrame: DataFrame containing player statistics for the last x gameweeks.
     """
+    print(f"Getting player stats with lag {last_x_gameweeks}...")
     if last_x_gameweeks > max(merged_gw["gw"]):
         print(
             f"Warning: last_x_gameweeks ({last_x_gameweeks}) is greater than the number of gameweeks available ({len(merged_gw)}). Using all available gameweeks."
@@ -401,6 +402,7 @@ def get_last_x_players_gw(
         for col in final_df.columns
     ]
 
+    final_df.to_csv(f"last_{last_x_gameweeks}_players_gw.csv", index=False)
     return final_df
 
 
@@ -408,6 +410,8 @@ def get_last_x_players_gw(
 def main():
     merged_gw = merge_all_gw_data()
     final_df = merged_gw.copy()
+
+    merged_gw.to_csv("merged_gws.csv", index=False)
 
     # Get the last x gameweeks for each player
     for lag in [3, 5, 10]:
@@ -418,6 +422,8 @@ def main():
             on=["player_id", "gw"],
             how="left",
         )
+
+    final_df.to_csv("merged_with_player_lags.csv", index=False)
 
     # # Merge with team stats
     for lag in [3, 5, 10]:

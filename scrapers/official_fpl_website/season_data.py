@@ -119,6 +119,17 @@ def scrape_season_data(season: str):
         get_data_path(season, "players_season_data.csv"), index=False
     )
 
+    # Team join date df
+    team_join_dates = pd.DataFrame(data["elements"])
+    team_join_dates = team_join_dates[["id", "team_join_date"]]
+    team_join_dates.rename(columns={"id": "player_id"}, inplace=True)
+    team_join_dates["team_join_date"] = pd.to_datetime(
+        team_join_dates["team_join_date"]
+    )
+
+    team_join_dates.to_csv(get_data_path(season, "team_join_dates.csv"), index=False)
+    print(f"Data for season {season} scraped successfully.")
+
 
 if __name__ == "__main__":
     scrape_season_data("2024-25")
