@@ -294,6 +294,9 @@ def get_players_season_data(season: str = SEASON) -> pd.DataFrame:
     df = pd.read_csv(get_data_path(season, "players_season_data.csv"))
     df.drop(columns=["web_name", "team_id"], inplace=True)
 
+    # Remove managers
+    df = df[df.element_type != 5]
+
     # One hot encoding for the position (element_type)
     df = pd.get_dummies(df, columns=["element_type"], prefix="pos")
     df.rename(
@@ -402,16 +405,16 @@ def get_last_x_players_gw(
         for col in final_df.columns
     ]
 
-    final_df.to_csv(f"last_{last_x_gameweeks}_players_gw.csv", index=False)
+    # final_df.to_csv(f"last_{last_x_gameweeks}_players_gw.csv", index=False)
     return final_df
 
 
 @time_function  # 200 seconds
 def main():
     merged_gw = merge_all_gw_data()
-    final_df = merged_gw.copy()
-
-    merged_gw.to_csv("merged_gws.csv", index=False)
+    final_df = merged_gw[
+        ["player_id", "gw", "team_id", "opponent_team_id", "was_home"]
+    ].copy()
 
     # Get the last x gameweeks for each player
     for lag in [3, 5, 10]:
@@ -423,7 +426,10 @@ def main():
             how="left",
         )
 
-    final_df.to_csv("merged_with_player_lags.csv", index=False)
+    # Nulls are players that didn't play in the last x gameweeks and players with blank gameweeks
+    # and players that joined mid-season
+    # We can drop these rows as they are not useful
+    final_df.dropna(inplace=True)
 
     # # Merge with team stats
     for lag in [3, 5, 10]:
@@ -448,16 +454,19 @@ def main():
         )
         final_df.drop(columns=["team_id_drop"], inplace=True)
 
-    # # Merge with players season data
-    # players_season_df = get_players_season_data()
-    # final_df = pd.merge(
-    #     final_df,
-    #     players_season_df,
-    #     on=["player_id"],
-    #     how="left",
-    # )
+    # For now drop na, i have to fix the data gathering to ensure that all teams have data for all gameweeks
+    final_df.dropna(inplace=True)
 
-    final_df.to_csv("temp.csv", index=False)
+    # Merge with players season data which includes positions
+    players_season_df = get_players_season_data()
+    final_df = pd.merge(
+        final_df,
+        players_season_df,
+        on=["player_id"],
+        how="left",
+    )
+
+    final_df.to_csv("final_df.csv", index=False)
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ def __load_manager_ids() -> list[int]:
 
 
 SEASON: str = "2024-25"
-LAST_PLAYED_GAMEWEEK: int = 36
+LAST_PLAYED_GAMEWEEK: int = 38
 
 __MANAGER_PLAYER_IDS: list[int] = __load_manager_ids()
 # If the manager IDs are already loaded, use them; otherwise, load them from the API.
