@@ -4,25 +4,27 @@ FPL Data Gathering Pipeline
 This module provides a comprehensive pipeline for gathering Fantasy Premier League (FPL) data
 from multiple sources including:
 
-1. Official FPL Website (priority scrapers - must run in order):
+1. Official FPL Website:
    - Player gameweek data
    - Season data
    - Fixtures data
 
-2. FPL Data Website (independent scrapers):
+2. FPL Data Website:
    - Team gameweek data
    - Additional gameweek data
 
-3. FBref (independent scrapers):
+3. FBref:
    - Team season data
    - Player match data (passing and summary stats)
+
+4. Baseline BPS Calculation:
+   - Calculates baseline BPS for all players
 
 Usage:
     python gather_data.py                          # Run full pipeline with defaults
     python gather_data.py --season 2023-24        # Specify different season
     python gather_data.py --start-gw 10 --end-gw 20  # Specify gameweek range
-    python gather_data.py --skip-priority          # Skip priority scrapers
-    python gather_data.py --skip-independent       # Skip independent scrapers
+    python gather_data.py --skip-scrapers          # Skip all data scraping steps
 
 Requirements:
     - All packages from requirements.txt must be installed
@@ -30,53 +32,55 @@ Requirements:
     - Internet connection for API access
 """
 
-import os
 import sys
+import os
 from typing import Optional
-
-from utils.general import time_function
 
 # Add the project root directory to the system path to import modules
 project_root = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(project_root)
 
 # Import scrapers from official FPL website
-from scrapers.fbref.players_by_gw import scrape_match_data_players  # noqa: E402
-
-# Import scrapers from FBref
-from scrapers.fbref.teams_season_data import scrape_team_season_data  # noqa: E402
+from scrapers.official_fpl_website.gw_data import (
+    scrape_gw_data_official_fpl_website,
+)  # noqa: E402
+from scrapers.official_fpl_website.season_data import scrape_season_data  # noqa: E402
+from scrapers.official_fpl_website.fixtures import scrape_fixtures  # noqa: E402
 
 # Import scrapers from FPL data website
 from scrapers.fpl_data_website.gw_data import scrape_fpl_data_website  # noqa: E402
 from scrapers.fpl_data_website.team_gw_data import scrape_team_gw_data  # noqa: E402
-from scrapers.official_fpl_website.fixtures import scrape_fixtures  # noqa: E402
-from scrapers.official_fpl_website.gw_data import (
-    scrape_gw_data_official_fpl_website,  # noqa: E402
-)
-from scrapers.official_fpl_website.season_data import scrape_season_data  # noqa: E402
+
+# Import scrapers from FBref
+from scrapers.fbref.teams_season_data import scrape_team_season_data  # noqa: E402
+from scrapers.fbref.players_by_gw import scrape_match_data_players  # noqa: E402
+
+# Import baseline BPS calculation
+from baseline_bps import calculate_baseline_bps  # noqa: E402
 
 # Import constants
-from utils.constants import LAST_PLAYED_GAMEWEEK, SEASON  # noqa: E402
+from utils.constants import SEASON, LAST_PLAYED_GAMEWEEK  # noqa: E402
 
 
-def run_priority_scrapers(season: str = SEASON) -> None:
+def run_all_scrapers_and_calculations(
+    season: str = SEASON, start_gw: int = 1, end_gw: int = LAST_PLAYED_GAMEWEEK
+) -> None:
     """
-    Run scrapers that need to be executed in order (dependencies).
-    According to README.md:
-    1. scrape_gw_data_official_fpl_website
-    2. scrape_fpl_data_website
+    Run all scrapers and data processing steps.
     """
-    print("=" * 60)
-    print("RUNNING PRIORITY SCRAPERS (Sequential Order)")
+    print("\n" + "=" * 60)
+    print("RUNNING ALL SCRAPERS AND CALCULATIONS")
     print("=" * 60)
 
+    # Official FPL Website scrapers
     print("\n1. Scraping GW data from Official FPL Website...")
     try:
         scrape_gw_data_official_fpl_website(season)
         print("✓ Successfully scraped GW data from Official FPL Website")
     except Exception as e:
         print(f"✗ Error scraping GW data from Official FPL Website: {e}")
-        raise
+        # Decide if this should be a critical error that stops the pipeline
+        # For now, we'll print the error and continue
 
     print("\n2. Scraping data from FPL Data Website...")
     try:
@@ -84,20 +88,7 @@ def run_priority_scrapers(season: str = SEASON) -> None:
         print("✓ Successfully scraped data from FPL Data Website")
     except Exception as e:
         print(f"✗ Error scraping data from FPL Data Website: {e}")
-        raise
 
-
-def run_independent_scrapers(
-    season: str = SEASON, start_gw: int = 1, end_gw: int = LAST_PLAYED_GAMEWEEK
-) -> None:
-    """
-    Run scrapers that can be executed in any order (no dependencies).
-    """
-    print("\n" + "=" * 60)
-    print("RUNNING INDEPENDENT SCRAPERS (Any Order)")
-    print("=" * 60)
-
-    # Official FPL Website scrapers
     print("\n3. Scraping fixtures from Official FPL Website...")
     try:
         scrape_fixtures()
@@ -142,14 +133,22 @@ def run_independent_scrapers(
     except Exception as e:
         print(f"✗ Error scraping player summary data: {e}")
 
+    # Baseline BPS Calculation
+    print("\n9. Calculating Baseline BPS...")
+    try:
+        calculate_baseline_bps(season)
+        print(
+            "✓ Successfully calculated Baseline BPS"
+        )  # Message updated in baseline_bps.py
+    except Exception as e:
+        print(f"✗ Error calculating Baseline BPS: {e}")
 
-@time_function
+
 def main(
     season: Optional[str] = None,
     start_gw: int = 1,
     end_gw: Optional[int] = None,
-    skip_priority: bool = False,
-    skip_independent: bool = False,
+    skip_scrapers: bool = False,
 ) -> None:
     """
     Main function to run the complete data gathering pipeline.
@@ -158,8 +157,7 @@ def main(
         season: Season to scrape data for (defaults to current season from constants)
         start_gw: Starting gameweek for range-based scrapers
         end_gw: Ending gameweek for range-based scrapers (defaults to last played GW)
-        skip_priority: Skip priority scrapers (useful if they've already been run)
-        skip_independent: Skip independent scrapers
+        skip_scrapers: Skip all scraping and calculation steps
     """
     # Set defaults
     if season is None:
@@ -174,17 +172,10 @@ def main(
     print("=" * 60)
 
     try:
-        # Run priority scrapers (must be run in order)
-        if not skip_priority:
-            run_priority_scrapers(season)
+        if not skip_scrapers:
+            run_all_scrapers_and_calculations(season, start_gw, end_gw)
         else:
-            print("\nSkipping priority scrapers...")
-
-        # Run independent scrapers (can be run in any order)
-        if not skip_independent:
-            run_independent_scrapers(season, start_gw, end_gw)
-        else:
-            print("\nSkipping independent scrapers...")
+            print("\nSkipping all scrapers and calculations...")
 
         print("\n" + "=" * 60)
         print("DATA GATHERING PIPELINE COMPLETED SUCCESSFULLY!")
@@ -193,7 +184,7 @@ def main(
     except Exception as e:
         print(f"\n❌ Pipeline failed with error: {e}")
         print("=" * 60)
-        raise
+        # raise # Optionally re-raise the exception if you want the script to exit with an error code
 
 
 if __name__ == "__main__":
@@ -210,10 +201,9 @@ if __name__ == "__main__":
         "--end-gw", type=int, help=f"Ending gameweek (default: {LAST_PLAYED_GAMEWEEK})"
     )
     parser.add_argument(
-        "--skip-priority", action="store_true", help="Skip priority scrapers"
-    )
-    parser.add_argument(
-        "--skip-independent", action="store_true", help="Skip independent scrapers"
+        "--skip-scrapers",
+        action="store_true",
+        help="Skip all scrapers and calculations",
     )
 
     args = parser.parse_args()
@@ -222,6 +212,5 @@ if __name__ == "__main__":
         season=args.season,
         start_gw=args.start_gw,
         end_gw=args.end_gw,
-        skip_priority=args.skip_priority,
-        skip_independent=args.skip_independent,
+        skip_scrapers=args.skip_scrapers,
     )
