@@ -413,7 +413,7 @@ def get_last_x_players_gw(
 def main():
     merged_gw = merge_all_gw_data()
     final_df = merged_gw[
-        ["player_id", "gw", "team_id", "opponent_team_id", "was_home"]
+        ["player_id", "gw", "team_id", "opponent_team_id", "was_home", "total_points"]
     ].copy()
 
     # Get the last x gameweeks for each player
