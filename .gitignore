@@ -9,3 +9,5 @@ utils/__pycache__/
 temp.py
 temp.ipynb
 temp.csv
+
+model_plots/
