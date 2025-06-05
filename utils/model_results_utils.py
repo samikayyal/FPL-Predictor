@@ -89,6 +89,86 @@ def update_model_results_ranking():
         print(f"Error updating rankings: {e}")
 
 
+def sort_models_by_average_rank():
+    """
+    Sort models in model_results.md based on average of MAE and MSE ranks and rewrite the file.
+    Lower average rank is better.
+    """
+    try:
+        with open("model_results.md", "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Extract model sections using regex
+        model_sections = re.split(r"# Model Training Results", content)
+        if len(model_sections) <= 1:
+            print("No model sections found in model_results.md")
+            return
+
+        # Save the header (content before the first model)
+        header = ""
+        if model_sections[0].strip():
+            header = model_sections[0]
+        model_sections.pop(0)
+
+        # Prepend the header back to each section
+        model_sections = [
+            "# Model Training Results" + section for section in model_sections
+        ]
+
+        # Dictionary to store model sections with their average ranks
+        model_ranks = {}
+
+        # Extract ranks for each model
+        mae_rank_pattern = r"### Test MAE: [\d.]+ \(Rank: (\d+)\)"
+        mse_rank_pattern = r"### Test Loss \(MSE\): [\d.]+ \(Rank: (\d+)\)"
+
+        # Process each model section
+        for section in model_sections:
+            try:
+                mae_rank_match = re.search(mae_rank_pattern, section)
+                mse_rank_match = re.search(mse_rank_pattern, section)
+
+                if mae_rank_match and mse_rank_match:
+                    mae_rank = int(mae_rank_match.group(1))
+                    mse_rank = int(mse_rank_match.group(1))
+                    avg_rank = (mae_rank + mse_rank) / 2
+
+                    # Store the section with its average rank
+                    model_ranks[section] = avg_rank
+                else:
+                    print("Warning: Could not find ranks in a model section")
+            except Exception as e:
+                print(f"Error processing model section: {e}")
+
+        # Sort models by average rank (lower is better)
+        sorted_models = sorted(model_ranks.items(), key=lambda x: x[1])
+
+        # Combine the sorted sections
+        sorted_content = header
+        for model_section, _ in sorted_models:
+            sorted_content += model_section
+
+        # Write the sorted content back to file
+        with open("model_results.md", "w", encoding="utf-8") as f:
+            f.write(sorted_content)
+
+        print("\nModels in model_results.md sorted by average rank.")
+        print(f"Total models: {len(sorted_models)}")
+        if sorted_models:
+            best_model = sorted_models[0]
+            mae_rank_match = re.search(mae_rank_pattern, best_model[0])
+            mse_rank_match = re.search(mse_rank_pattern, best_model[0])
+            if mae_rank_match and mse_rank_match:
+                mae_rank = int(mae_rank_match.group(1))
+                mse_rank = int(mse_rank_match.group(1))
+                print(
+                    f"Best model has average rank: {best_model[1]:.2f} (MAE rank: {mae_rank}, MSE rank: {mse_rank})"
+                )
+
+    except Exception as e:
+        print(f"Error sorting models by average rank: {e}")
+
+
 def get_model_layers_info(model):
     layers_info = []
     for i, layer in enumerate(model.layers, start=1):
@@ -155,3 +235,7 @@ def check_duplicate_config(config: dict, model):
                 return False  # Found a mismatch in any column
 
     return True
+
+
+if __name__ == "__main__":
+    update_model_results_ranking()

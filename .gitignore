@@ -11,3 +11,5 @@ temp.ipynb
 temp.csv
 
 model_plots/
+
+logs/

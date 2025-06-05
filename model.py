@@ -99,12 +99,12 @@ print(f"X_test_processed shape: {X_test_processed.shape}")
 # ================================
 
 # ==== Hyperparameters ====
-LEARNING_RATE: float = 0.0005
+LEARNING_RATE: float = 0.0001
 EPOCHS: int = 100
 BATCH_SIZE: int = 64
 DROPOUT_RATE: float = 0.3
 IS_L2_REGULARIZATION: bool = False
-L2_REGULARIZATION_RATE: float = 0.001 if IS_L2_REGULARIZATION else 0.0
+L2_REGULARIZATION_RATE: float = 0.01 if IS_L2_REGULARIZATION else 0.0
 
 # Define the model
 model = keras.models.Sequential(
@@ -134,6 +134,15 @@ model = keras.models.Sequential(
         Dropout(DROPOUT_RATE),
         Dense(
             32,
+            activation="relu",
+            kernel_regularizer=(
+                keras.regularizers.l2(L2_REGULARIZATION_RATE)
+                if IS_L2_REGULARIZATION
+                else None
+            ),
+        ),
+        Dense(
+            16,
             activation="relu",
             kernel_regularizer=(
                 keras.regularizers.l2(L2_REGULARIZATION_RATE)
@@ -194,6 +203,11 @@ callbacks = [
     ),
     keras.callbacks.ReduceLROnPlateau(
         monitor="val_loss", factor=0.2, patience=6, min_lr=1e-6
+    ),
+    keras.callbacks.TensorBoard(
+        log_dir=os.path.join(
+            "logs", f"model_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
+        ),
     ),
 ]
 
