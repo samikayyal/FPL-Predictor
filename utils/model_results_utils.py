@@ -8,40 +8,67 @@ MODEL_CONFIGS_FILE = os.path.join(_PROJECT_ROOT, "model_configs.csv")
 
 
 def update_model_results_ranking():
-    # Place a ranking for each metric in the results file
+    # Place a ranking for each metric in the results file (excluding MSE from average)
     try:
         with open("model_results.md", "r", encoding="utf-8") as f:
             content = f.read()
-        # First, remove any existing rankings to avoid duplication
-        content = re.sub(r"(### Test MAE: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
-        content = re.sub(
-            r"(### Test Loss \(MSE\): [\d.]+)( \(Rank: \d+\))+", r"\1", content
-        )
 
-        # Extract all Test MAE and Test Loss values using regex
-        mae_pattern = r"### Test MAE: ([\d.]+)"
-        loss_pattern = r"### Test Loss \(MSE\): ([\d.]+)"
+        # Remove any existing rankings to avoid duplication
+        content = re.sub(r"(### Test Loss \(MAE\): [\d.]+)( \(Rank: \d+\))+", r"\1", content)
+        content = re.sub(r"(### Test Log-Cosh: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
+        content = re.sub(r"(### Test Huber: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
+        # MSE is not included in the average, but still rank it for completeness
+        content = re.sub(r"(### Test MSE: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
+
+        # Extract all metric values using regex
+        mae_pattern = r"### Test Loss \(MAE\): ([\d.]+)"
+        mse_pattern = r"### Test MSE: ([\d.]+)"
+        logcosh_pattern = r"### Test Log-Cosh: ([\d.]+)"
+        huber_pattern = r"### Test Huber: ([\d.]+)"
 
         mae_matches = re.findall(mae_pattern, content)
-        loss_matches = re.findall(loss_pattern, content)
+        mse_matches = re.findall(mse_pattern, content)
+        logcosh_matches = re.findall(logcosh_pattern, content)
+        huber_matches = re.findall(huber_pattern, content)
 
         # Convert to float and create lists with original values and indices
         mae_values = [(float(val), i) for i, val in enumerate(mae_matches)]
-        loss_values = [(float(val), i) for i, val in enumerate(loss_matches)]
+        mse_values = [(float(val), i) for i, val in enumerate(mse_matches)]
+        logcosh_values = [(float(val), i) for i, val in enumerate(logcosh_matches)]
+        huber_values = [(float(val), i) for i, val in enumerate(huber_matches)]
 
-        # Sort by value (lower is better for both MAE and loss)
+        # Sort by value (lower is better for all)
         mae_sorted = sorted(mae_values, key=lambda x: x[0])
-        loss_sorted = sorted(loss_values, key=lambda x: x[0])
+        mse_sorted = sorted(mse_values, key=lambda x: x[0])
+        logcosh_sorted = sorted(logcosh_values, key=lambda x: x[0])
+        huber_sorted = sorted(huber_values, key=lambda x: x[0])
 
         # Create ranking dictionaries
         mae_rankings = {}
-        loss_rankings = {}
+        mse_rankings = {}
+        logcosh_rankings = {}
+        huber_rankings = {}
 
         for rank, (value, original_index) in enumerate(mae_sorted, 1):
             mae_rankings[original_index] = rank
+        for rank, (value, original_index) in enumerate(mse_sorted, 1):
+            mse_rankings[original_index] = rank
+        for rank, (value, original_index) in enumerate(logcosh_sorted, 1):
+            logcosh_rankings[original_index] = rank
+        for rank, (value, original_index) in enumerate(huber_sorted, 1):
+            huber_rankings[original_index] = rank
 
-        for rank, (value, original_index) in enumerate(loss_sorted, 1):
-            loss_rankings[original_index] = rank
+        # Compute average rank (excluding MSE)
+        avg_ranks = {}
+        n_models = len(mae_matches)
+        # Use numpy mean, so import numpy if not already imported
+        import numpy as np
+        for i in range(n_models):
+            avg_ranks[i] = np.mean([
+                mae_rankings.get(i, n_models+1),
+                logcosh_rankings.get(i, n_models+1),
+                huber_rankings.get(i, n_models+1)
+            ])
 
         # Update content with rankings
         updated_content = content
@@ -50,48 +77,66 @@ def update_model_results_ranking():
         for i, match in enumerate(reversed(mae_matches_with_positions)):
             original_index = len(mae_matches_with_positions) - 1 - i
             ranking = mae_rankings[original_index]
-            new_text = f"### Test MAE: {mae_matches[original_index]} (Rank: {ranking})"
+            new_text = f"### Test Loss (MAE): {mae_matches[original_index]} (Rank: {ranking})"
             updated_content = (
                 updated_content[: match.start()]
                 + new_text
                 + updated_content[match.end() :]
             )
 
-        # Replace Loss entries with rankings
-        loss_matches_with_positions = list(re.finditer(loss_pattern, updated_content))
-        for i, match in enumerate(reversed(loss_matches_with_positions)):
-            original_index = len(loss_matches_with_positions) - 1 - i
-            ranking = loss_rankings[original_index]
-            new_text = (
-                f"### Test Loss (MSE): {loss_matches[original_index]} (Rank: {ranking})"
-            )
+        # Replace MSE entries with rankings
+        mse_matches_with_positions = list(re.finditer(mse_pattern, updated_content))
+        for i, match in enumerate(reversed(mse_matches_with_positions)):
+            original_index = len(mse_matches_with_positions) - 1 - i
+            ranking = mse_rankings[original_index]
+            new_text = f"### Test MSE: {mse_matches[original_index]} (Rank: {ranking})"
             updated_content = (
                 updated_content[: match.start()]
                 + new_text
                 + updated_content[match.end() :]
             )
+
+        # Replace Log-Cosh entries with rankings
+        logcosh_matches_with_positions = list(re.finditer(logcosh_pattern, updated_content))
+        for i, match in enumerate(reversed(logcosh_matches_with_positions)):
+            original_index = len(logcosh_matches_with_positions) - 1 - i
+            ranking = logcosh_rankings[original_index]
+            new_text = f"### Test Log-Cosh: {logcosh_matches[original_index]} (Rank: {ranking})"
+            updated_content = (
+                updated_content[: match.start()]
+                + new_text
+                + updated_content[match.end() :]
+            )
+
+        # Replace Huber entries with rankings
+        huber_matches_with_positions = list(re.finditer(huber_pattern, updated_content))
+        for i, match in enumerate(reversed(huber_matches_with_positions)):
+            original_index = len(huber_matches_with_positions) - 1 - i
+            ranking = huber_rankings[original_index]
+            new_text = f"### Test Huber: {huber_matches[original_index]} (Rank: {ranking})"
+            updated_content = (
+                updated_content[: match.start()]
+                + new_text
+                + updated_content[match.end() :]
+            )
+
         # Write updated content back to file
         with open("model_results.md", "w", encoding="utf-8") as f:
             f.write(updated_content)
 
         print("\n---------Update model rankings in model_results.md----------\n")
         print("Rankings updated successfully!")
-        print(f"Total models: {len(mae_matches)}")
+        print(f"Total models: {n_models}")
         if mae_matches:
-            best_mae = min(mae_values)
-            best_loss = min(loss_values)
-            print(f"Best MAE: {best_mae[0]:.4f} (Model {mae_rankings[best_mae[1]]})")
-            print(
-                f"Best Loss: {best_loss[0]:.4f} (Model {loss_rankings[best_loss[1]]})"
-            )
-
+            best_avg = min(avg_ranks.items(), key=lambda x: x[1])
+            print(f"Best average rank: {best_avg[1]:.2f} (Model {best_avg[0]+1})")
     except Exception as e:
         print(f"Error updating rankings: {e}")
 
 
 def sort_models_by_average_rank():
     """
-    Sort models in model_results.md based on average of MAE and MSE ranks and rewrite the file.
+    Sort models in model_results.md based on average of MAE, Log-Cosh, and Huber ranks (excluding MSE) and rewrite the file.
     Lower average rank is better.
     """
     try:
@@ -111,32 +156,31 @@ def sort_models_by_average_rank():
         model_sections.pop(0)
 
         # Prepend the header back to each section
-        model_sections = [
-            "# Model Training Results" + section for section in model_sections
-        ]
+        model_sections = ["# Model Training Results" + section for section in model_sections]
 
         # Dictionary to store model sections with their average ranks
         model_ranks = {}
 
         # Extract ranks for each model
-        mae_rank_pattern = r"### Test MAE: [\d.]+ \(Rank: (\d+)\)"
-        mse_rank_pattern = r"### Test Loss \(MSE\): [\d.]+ \(Rank: (\d+)\)"
+        mae_rank_pattern = r"### Test Loss \(MAE\): [\d.]+ \(Rank: (\d+)\)"
+        logcosh_rank_pattern = r"### Test Log-Cosh: [\d.]+ \(Rank: (\d+)\)"
+        huber_rank_pattern = r"### Test Huber: [\d.]+ \(Rank: (\d+)\)"
 
         # Process each model section
         for section in model_sections:
             try:
                 mae_rank_match = re.search(mae_rank_pattern, section)
-                mse_rank_match = re.search(mse_rank_pattern, section)
+                logcosh_rank_match = re.search(logcosh_rank_pattern, section)
+                huber_rank_match = re.search(huber_rank_pattern, section)
 
-                if mae_rank_match and mse_rank_match:
+                if mae_rank_match and logcosh_rank_match and huber_rank_match:
                     mae_rank = int(mae_rank_match.group(1))
-                    mse_rank = int(mse_rank_match.group(1))
-                    avg_rank = (mae_rank + mse_rank) / 2
-
-                    # Store the section with its average rank
+                    logcosh_rank = int(logcosh_rank_match.group(1))
+                    huber_rank = int(huber_rank_match.group(1))
+                    avg_rank = (mae_rank + logcosh_rank + huber_rank) / 3
                     model_ranks[section] = avg_rank
                 else:
-                    print("Warning: Could not find ranks in a model section")
+                    print("Warning: Could not find all ranks in a model section")
             except Exception as e:
                 print(f"Error processing model section: {e}")
 
@@ -152,19 +196,20 @@ def sort_models_by_average_rank():
         with open("model_results.md", "w", encoding="utf-8") as f:
             f.write(sorted_content)
 
-        print("\nModels in model_results.md sorted by average rank.")
+        print("\nModels in model_results.md sorted by average rank (excluding MSE).")
         print(f"Total models: {len(sorted_models)}")
         if sorted_models:
             best_model = sorted_models[0]
             mae_rank_match = re.search(mae_rank_pattern, best_model[0])
-            mse_rank_match = re.search(mse_rank_pattern, best_model[0])
-            if mae_rank_match and mse_rank_match:
+            logcosh_rank_match = re.search(logcosh_rank_pattern, best_model[0])
+            huber_rank_match = re.search(huber_rank_pattern, best_model[0])
+            if mae_rank_match and logcosh_rank_match and huber_rank_match:
                 mae_rank = int(mae_rank_match.group(1))
-                mse_rank = int(mse_rank_match.group(1))
+                logcosh_rank = int(logcosh_rank_match.group(1))
+                huber_rank = int(huber_rank_match.group(1))
                 print(
-                    f"Best model has average rank: {best_model[1]:.2f} (MAE rank: {mae_rank}, MSE rank: {mse_rank})"
+                    f"Best model has average rank: {best_model[1]:.2f} (MAE rank: {mae_rank}, Log-Cosh rank: {logcosh_rank}, Huber rank: {huber_rank})"
                 )
-
     except Exception as e:
         print(f"Error sorting models by average rank: {e}")
 
@@ -239,3 +284,4 @@ def check_duplicate_config(config: dict, model):
 
 if __name__ == "__main__":
     update_model_results_ranking()
+    sort_models_by_average_rank()

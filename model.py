@@ -105,6 +105,7 @@ BATCH_SIZE: int = 64
 DROPOUT_RATE: float = 0.3
 IS_L2_REGULARIZATION: bool = False
 L2_REGULARIZATION_RATE: float = 0.01 if IS_L2_REGULARIZATION else 0.0
+HUBER_DELTA: float = 1.5
 
 # Define the model
 model = keras.models.Sequential(
@@ -141,15 +142,15 @@ model = keras.models.Sequential(
                 else None
             ),
         ),
-        Dense(
-            16,
-            activation="relu",
-            kernel_regularizer=(
-                keras.regularizers.l2(L2_REGULARIZATION_RATE)
-                if IS_L2_REGULARIZATION
-                else None
-            ),
-        ),
+        # Dense(
+        #     16,
+        #     activation="relu",
+        #     kernel_regularizer=(
+        #         keras.regularizers.l2(L2_REGULARIZATION_RATE)
+        #         if IS_L2_REGULARIZATION
+        #         else None
+        #     ),
+        # ),
         Dense(1, activation="linear"),
     ]
 )
@@ -158,8 +159,12 @@ model = keras.models.Sequential(
 # Compile the model
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
-    loss="mean_squared_error",  # Common for regression
-    metrics=["mean_absolute_error"],  # Optional: another metric to track
+    loss="mean_absolute_error",
+    metrics=[
+        "mean_squared_error",
+        keras.losses.LogCosh(),
+        keras.losses.Huber(delta=HUBER_DELTA),
+    ],
 )
 
 
@@ -181,6 +186,7 @@ config = {
     "DROPOUT_RATE": DROPOUT_RATE,
     "IS_L2_REGULARIZATION": IS_L2_REGULARIZATION,
     "L2_REGULARIZATION_RATE": L2_REGULARIZATION_RATE,
+    "HUBER_DELTA": HUBER_DELTA,
 }
 
 if check_duplicate_config(config, model):
@@ -204,11 +210,11 @@ callbacks = [
     keras.callbacks.ReduceLROnPlateau(
         monitor="val_loss", factor=0.2, patience=6, min_lr=1e-6
     ),
-    keras.callbacks.TensorBoard(
-        log_dir=os.path.join(
-            "logs", f"model_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
-        ),
-    ),
+    # keras.callbacks.TensorBoard(
+    #     log_dir=os.path.join(
+    #         "logs", f"model_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
+    #     ),
+    # ),
 ]
 
 history = model.fit(
@@ -222,9 +228,14 @@ history = model.fit(
 )
 
 # Evaluate the model on the test set
-test_loss, test_mae = model.evaluate(X_test_processed, y_test, verbose=0)
-print(f"\n\nTest MAE: {test_mae:.4f}")
-print(f"Test Loss (MSE): {test_loss:.4f}")
+test_loss, test_mse, test_log_cosh, test_huber = model.evaluate(
+    X_test_processed, y_test, verbose=1
+)
+print(f"\n\nTest Loss (MAE): {test_loss:.4f}")
+print(f"Test MSE: {test_mse:.4f}")
+print(f"Test Log-Cosh: {test_log_cosh:.4f}")
+print(f"Test Huber: {test_huber:.4f}")
+
 
 # Save state and results
 __end_time = time.time()
@@ -239,34 +250,58 @@ with open("model_results.md", "a", encoding="utf-8") as f:  # Changed to .md
     f.write(f"- DROPOUT_RATE: {DROPOUT_RATE}\n\n")
     f.write(f"- IS_L2_REGULARIZATION: {IS_L2_REGULARIZATION}\n")
     f.write(f"- L2_REGULARIZATION_RATE: {L2_REGULARIZATION_RATE}\n\n")
+    f.write(f"- HUBER_DELTA: {HUBER_DELTA}\n\n")
 
     f.write("## Evaluation Metrics\n")
-    f.write(f"### Test MAE: {test_mae:.4f}\n")
-    f.write(f"### Test Loss (MSE): {test_loss:.4f}\n\n")
+    f.write(f"### Test Loss (MAE): {test_loss:.4f}\n")
+    f.write(f"### Test MSE: {test_mse:.4f}\n")
+    f.write(f"### Test Log-Cosh: {test_log_cosh:.4f}\n")
+    f.write(f"### Test Huber: {test_huber:.4f}\n\n")
 
     f.write("## Model Architecture\n")
     f.write(f"```\n{model_summary_string}```\n")  # Use Markdown code block for summary
 
 # Plots
-plt.figure(figsize=(15, 6))  # Adjusted figure size for two subplots
+plt.figure(figsize=(15, 10))  # Adjusted figure size for 2x2 subplots
 
-# First subplot: Loss Over Epochs
-plt.subplot(1, 2, 1)  # 1 row, 2 columns, 1st subplot
-plt.plot(history.history["loss"], label="Train Loss")
-plt.plot(history.history["val_loss"], label="Validation Loss")
-plt.title("Loss Over Epochs")
-plt.xlabel("Epochs")
-plt.ylabel("Loss")
-plt.legend()
-
-# Second subplot: Mean Absolute Error Over Epochs
-plt.subplot(1, 2, 2)  # 1 row, 2 columns, 2nd subplot
-plt.plot(history.history["mean_absolute_error"], label="Train MAE")
-plt.plot(history.history["val_mean_absolute_error"], label="Validation MAE")
-plt.title("Mean Absolute Error Over Epochs")
+# First subplot: Loss (Mean Absolute Error) Over Epochs
+plt.subplot(2, 2, 1)
+plt.plot(history.history["loss"], label="Train MAE (Loss)")
+plt.plot(history.history["val_loss"], label="Validation MAE (Loss)")
+plt.title("Mean Absolute Error (Loss) Over Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Mean Absolute Error")
 plt.legend()
+
+# Second subplot: Mean Squared Error Over Epochs
+plt.subplot(2, 2, 2)
+plt.plot(history.history["mean_squared_error"], label="Train MSE")
+plt.plot(history.history["val_mean_squared_error"], label="Validation MSE")
+plt.title("Mean Squared Error Over Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Mean Squared Error")
+plt.legend()
+
+# Third subplot: Log-Cosh Over Epochs
+plt.subplot(2, 2, 3)
+# Corrected keys:
+plt.plot(history.history["log_cosh"], label="Train Log-Cosh")
+plt.plot(history.history["val_log_cosh"], label="Validation Log-Cosh")
+plt.title("Log-Cosh Over Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Log-Cosh")
+plt.legend()
+
+# Fourth subplot: Huber Loss Over Epochs
+plt.subplot(2, 2, 4)
+# Corrected keys:
+plt.plot(history.history["huber_loss"], label="Train Huber Loss")
+plt.plot(history.history["val_huber_loss"], label="Validation Huber Loss")
+plt.title("Huber Loss Over Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Huber Loss")
+plt.legend()
+
 
 plt.tight_layout()  # Adjusts subplot params for a tight layout
 plot_filename = os.path.join(
@@ -280,7 +315,7 @@ plt.show()
 
 with open("model_results.md", "a", encoding="utf-8") as f:
     f.write("## Training Plots\n")
-    f.write(f"![Training Plots]({plot_filename})\n\n\n")  # Link to the saved plot image
+    f.write(f"![Training Plots]({plot_filename})\n\n\n")
 
 # Update rankings in the model results markdown file
 update_model_results_ranking()
