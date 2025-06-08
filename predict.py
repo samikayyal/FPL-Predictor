@@ -35,7 +35,7 @@ def get_features(gameweek: int) -> tuple[pd.DataFrame, pd.Series]:
         ],
         axis=1,
     )
-
+    features.to_csv("temp.csv", index=False)
     return features, ids
 
 
