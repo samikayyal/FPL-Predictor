@@ -162,11 +162,11 @@ model = keras.models.Sequential(
 # Compile the model
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
-    loss="mean_absolute_error",
+    loss=keras.losses.Huber(delta=HUBER_DELTA),
     metrics=[
         "mean_squared_error",
         keras.losses.LogCosh(),
-        keras.losses.Huber(delta=HUBER_DELTA),
+        "mean_absolute_error",
     ],
 )
 
@@ -213,11 +213,6 @@ callbacks = [
     keras.callbacks.ReduceLROnPlateau(
         monitor="val_loss", factor=0.2, patience=6, min_lr=1e-6
     ),
-    # keras.callbacks.TensorBoard(
-    #     log_dir=os.path.join(
-    #         "logs", f"model_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}"
-    #     ),
-    # ),
 ]
 
 history = model.fit(
@@ -231,13 +226,13 @@ history = model.fit(
 )
 
 # Evaluate the model on the test set
-test_loss, test_mse, test_log_cosh, test_huber = model.evaluate(
+test_loss, test_mse, test_log_cosh, test_mae = model.evaluate(
     X_test_processed, y_test, verbose=1
 )
-print(f"\n\nTest Loss (MAE): {test_loss:.4f}")
+print(f"\n\nTest Loss (Huber): {test_loss:.4f}")
 print(f"Test MSE: {test_mse:.4f}")
 print(f"Test Log-Cosh: {test_log_cosh:.4f}")
-print(f"Test Huber: {test_huber:.4f}")
+print(f"Test MAE: {test_mae:.4f}")
 
 
 # Save state and results
@@ -256,10 +251,10 @@ with open("model_results.md", "a", encoding="utf-8") as f:  # Changed to .md
     f.write(f"- HUBER_DELTA: {HUBER_DELTA}\n\n")
 
     f.write("## Evaluation Metrics\n")
-    f.write(f"### Test Loss (MAE): {test_loss:.4f}\n")
+    f.write(f"### Test Loss (Huber): {test_loss:.4f}\n")
     f.write(f"### Test MSE: {test_mse:.4f}\n")
     f.write(f"### Test Log-Cosh: {test_log_cosh:.4f}\n")
-    f.write(f"### Test Huber: {test_huber:.4f}\n\n")
+    f.write(f"### Test MAE: {test_mae:.4f}\n\n")
 
     f.write("## Model Architecture\n")
     f.write(f"```\n{model_summary_string}```\n")  # Use Markdown code block for summary
@@ -269,11 +264,11 @@ plt.figure(figsize=(15, 10))  # Adjusted figure size for 2x2 subplots
 
 # First subplot: Loss (Mean Absolute Error) Over Epochs
 plt.subplot(2, 2, 1)
-plt.plot(history.history["loss"], label="Train MAE (Loss)")
-plt.plot(history.history["val_loss"], label="Validation MAE (Loss)")
-plt.title("Mean Absolute Error (Loss) Over Epochs")
+plt.plot(history.history["loss"], label="Train Huber Loss")
+plt.plot(history.history["val_loss"], label="Validation Huber Loss")
+plt.title("Huber Loss Over Epochs")
 plt.xlabel("Epochs")
-plt.ylabel("Mean Absolute Error")
+plt.ylabel("Huber Loss")
 plt.legend()
 
 # Second subplot: Mean Squared Error Over Epochs
@@ -298,11 +293,11 @@ plt.legend()
 # Fourth subplot: Huber Loss Over Epochs
 plt.subplot(2, 2, 4)
 # Corrected keys:
-plt.plot(history.history["huber_loss"], label="Train Huber Loss")
-plt.plot(history.history["val_huber_loss"], label="Validation Huber Loss")
-plt.title("Huber Loss Over Epochs")
+plt.plot(history.history["mean_absolute_error"], label="Train MAE")
+plt.plot(history.history["val_mean_absolute_error"], label="Validation MAE")
+plt.title("MAE Over Epochs")
 plt.xlabel("Epochs")
-plt.ylabel("Huber Loss")
+plt.ylabel("MAE")
 plt.legend()
 
 

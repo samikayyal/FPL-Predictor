@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
 
 from utils.constants import SEASON
 from utils.get_ids import get_player_name
@@ -13,15 +14,26 @@ def get_features(gameweek: int) -> tuple[pd.DataFrame, pd.Series]:
     df = pd.read_csv("final_df.csv")
     df = df[df["gw"] == gameweek].copy()
 
-    # ========== temp
+    ids = df["player_id"]
     global actual_points
     actual_points = df["total_points"]
-    print(f"Actual points for gameweek {gameweek}: {actual_points.tolist()}")
-    # ========== temp
 
-    ids = df["player_id"]
     features = df.drop(
         columns=["player_id", "team_id", "opponent_team_id", "total_points"]
+    )
+
+    # Standardize the features
+    # but not the gameweek column
+    gws = features["gw"]
+    features = features.drop(columns=["gw"])
+    scaler = StandardScaler()
+    features_scaled = scaler.fit_transform(features)
+    features = pd.concat(
+        [
+            pd.DataFrame(features_scaled, columns=features.columns),
+            gws.reset_index(drop=True),
+        ],
+        axis=1,
     )
 
     return features, ids
@@ -50,6 +62,7 @@ def predict(gameweek: int) -> pd.DataFrame:
 def main():
     gameweek = 38
     predictions = predict(gameweek)
+
     global actual_points
     actual_points = actual_points.tolist()
     predictions["actual_points"] = actual_points
