@@ -2,7 +2,11 @@ import os
 
 import pandas as pd
 
-from utils.constants import LAST_PLAYED_GAMEWEEK, MANAGER_PLAYER_IDS, SEASON
+from utils.constants import (  # noqa: F401
+    LAST_PLAYED_GAMEWEEK,
+    MANAGER_PLAYER_IDS,
+    SEASON,
+)
 from utils.general import get_data_path, time_function
 from utils.get_ids import external_team_name_to_fpl_name, get_player_team, get_team_id
 
@@ -37,7 +41,7 @@ def get_merged_stat_df(season: str = SEASON) -> pd.DataFrame:
     return merged_stat_df
 
 
-def get_final_dfs_official_fpl(season: str = SEASON) -> pd.DataFrame:
+def get_merged_gws_df_official_fpl(season: str = SEASON) -> pd.DataFrame:
     """
     Merges all CSV files in the gws directory into a single DataFrame,
     Which are scraped gw-by-gw from the official fpl website.
@@ -50,14 +54,14 @@ def get_final_dfs_official_fpl(season: str = SEASON) -> pd.DataFrame:
         if gw_df.endswith(".csv")
     ]
 
-    final_df_df = pd.concat(gw_df_list, ignore_index=True)
+    final_df = pd.concat(gw_df_list, ignore_index=True)
 
-    final_df_df.rename(columns={"gameweek": "gw"}, inplace=True)
-    final_df_df.drop(columns=["fixture", "value"], inplace=True)
+    final_df.rename(columns={"gameweek": "gw"}, inplace=True)
+    final_df.drop(columns=["fixture", "value"], inplace=True)
 
-    final_df_df["was_home"] = final_df_df["was_home"].astype(bool)
+    final_df["was_home"] = final_df["was_home"].astype(bool)
 
-    return final_df_df
+    return final_df
 
 
 def get_merged_passing_gws_fbref(season: str = SEASON) -> pd.DataFrame:
@@ -87,12 +91,12 @@ def merge_all_gw_data(season: str = SEASON) -> pd.DataFrame:
     """
     print("Merging all gw data...")
 
-    final_df_df = get_final_dfs_official_fpl(season).fillna(0)
+    final_df = get_merged_gws_df_official_fpl(season).fillna(0)
     merged_stat_df = get_merged_stat_df(season).fillna(0)
     merged_passing_gw_df = get_merged_passing_gws_fbref(season).fillna(0)
 
     final_merged = pd.merge(
-        final_df_df,
+        final_df,
         merged_stat_df,
         on=["player_id", "gw"],
         how="left",
@@ -117,13 +121,14 @@ def merge_all_gw_data(season: str = SEASON) -> pd.DataFrame:
     return final_merged
 
 
-def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.DataFrame:
+def get_team_stats_df(season: str = SEASON, lag: int = 10) -> pd.DataFrame:
     """
     Get the average of stats last x gameweeks for each team using the same logic as get_last_x_players_gw.
     Returns:
         pd.DataFrame: DataFrame containing team statistics for the last x gameweeks.
     """
-    print(f"Getting team stats with lag {last_x_gameweeks}...")
+    print(f"Getting team stats with lag {lag}...")
+
     # Load and prepare all gameweek data
     gws_dfs: list[pd.DataFrame] = []
     for file in os.listdir(get_data_path(season, "team_gws")):
@@ -168,8 +173,8 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
         return pd.DataFrame()
 
     # Concatenate all gameweek data
-    all_gws = pd.concat(gws_dfs, ignore_index=True)
-    all_gws.rename(
+    all_gws_df = pd.concat(gws_dfs, ignore_index=True)
+    all_gws_df.rename(
         columns={
             "Home?": "was_home",
             "Shots": "shots",
@@ -183,19 +188,19 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
         inplace=True,
     )
 
-    if last_x_gameweeks > max(all_gws["gw"]):
+    if lag > max(all_gws_df["gw"]):
         print(
-            f"Warning: last_x_gameweeks ({last_x_gameweeks}) is greater than the number of gameweeks available ({max(all_gws['gw'])}). Using all available gameweeks."
+            f"Warning: Lag ({lag}) is greater than the number of gameweeks available ({max(all_gws_df['gw'])}). Using all available gameweeks."
         )
-        last_x_gameweeks = max(all_gws["gw"])
+        lag = max(all_gws_df["gw"])
 
     # Remove Gameweek column as it's not needed for averaging
-    all_gws = all_gws.drop(columns=["Gameweek"])
+    all_gws_df = all_gws_df.drop(columns=["Gameweek"])
 
     data = []
     # Loop through each team and gameweeks that team played in
-    for team_id in all_gws["team_id"].unique():
-        team_df = all_gws[all_gws["team_id"] == team_id]
+    for team_id in all_gws_df["team_id"].unique():
+        team_df = all_gws_df[all_gws_df["team_id"] == team_id]
 
         played_gameweeks = team_df["gw"].unique().tolist()
 
@@ -204,11 +209,11 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
             # Get the gameweeks the team played in before the current gameweek
             gws_before_current = sorted(
                 [g for g in played_gameweeks if g < gw], reverse=True
-            )[-last_x_gameweeks:]
+            )[-lag:]
             if len(gws_before_current) == 0:
                 continue
             # If the team has played less than last_x_gameweeks prior to 'gw', use all available gameweeks
-            elif len(gws_before_current) < last_x_gameweeks:
+            elif len(gws_before_current) < lag:
                 gws_before_current = sorted(gws_before_current, reverse=True)
 
             # Get the data for the last x gameweeks
@@ -263,7 +268,7 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
 
         # If the team has no data for the last x gameweeks, skip
         if len(team_gw_dfs) == 0:
-            print(f"Team {team_id} has no data for last {last_x_gameweeks} gameweeks.")
+            print(f"Team {team_id} has no data for last {lag} gameweeks.")
             continue
 
         # Concatenate the data for the team across all gameweeks
@@ -271,18 +276,14 @@ def get_team_stats_df(season: str = SEASON, last_x_gameweeks: int = 10) -> pd.Da
         data.append(team_df_final)
 
     if len(data) == 0:
-        print(f"No data found for last {last_x_gameweeks} gameweeks.")
+        print(f"No data found for last {lag} gameweeks.")
         return pd.DataFrame()
 
     final_df = pd.concat(data, ignore_index=True)
 
     # Rename columns to include the lag suffix
     final_df.columns = [
-        (
-            col + f"_last_{last_x_gameweeks}_team"
-            if col not in ["team_id", "was_home", "gw"]
-            else col
-        )
+        (col + f"_last_{lag}_team" if col not in ["team_id", "was_home", "gw"] else col)
         for col in final_df.columns
     ]
 
@@ -433,7 +434,7 @@ def main():
 
     # # Merge with team stats
     for lag in [3, 5, 10]:
-        team_df = get_team_stats_df(last_x_gameweeks=lag)
+        team_df = get_team_stats_df(lag=lag)
         final_df = pd.merge(
             final_df,
             team_df,

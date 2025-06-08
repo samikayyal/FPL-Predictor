@@ -13,3 +13,5 @@ temp.csv
 model_plots/
 
 logs/
+
+predictions/

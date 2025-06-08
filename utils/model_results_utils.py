@@ -1,6 +1,7 @@
 import os
 import re
 
+import numpy as np
 import pandas as pd
 
 _PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -14,13 +15,17 @@ def update_model_results_ranking():
             content = f.read()
 
         # Remove any existing rankings to avoid duplication
-        content = re.sub(r"(### Test Loss \(MAE\): [\d.]+)( \(Rank: \d+\))+", r"\1", content)
-        content = re.sub(r"(### Test Log-Cosh: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
+        content = re.sub(
+            r"(### Test Loss \(MAE\): [\d.]+)( \(Rank: \d+\))+", r"\1", content
+        )
+        content = re.sub(
+            r"(### Test Log-Cosh: [\d.]+)( \(Rank: \d+\))+", r"\1", content
+        )
         content = re.sub(r"(### Test Huber: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
-        # MSE is not included in the average, but still rank it for completeness
+        # MSE is not included in the average, but still rank it
         content = re.sub(r"(### Test MSE: [\d.]+)( \(Rank: \d+\))+", r"\1", content)
 
-        # Extract all metric values using regex
+        # Extract all values using regex
         mae_pattern = r"### Test Loss \(MAE\): ([\d.]+)"
         mse_pattern = r"### Test MSE: ([\d.]+)"
         logcosh_pattern = r"### Test Log-Cosh: ([\d.]+)"
@@ -31,7 +36,7 @@ def update_model_results_ranking():
         logcosh_matches = re.findall(logcosh_pattern, content)
         huber_matches = re.findall(huber_pattern, content)
 
-        # Convert to float and create lists with original values and indices
+        # lists with original values and indices
         mae_values = [(float(val), i) for i, val in enumerate(mae_matches)]
         mse_values = [(float(val), i) for i, val in enumerate(mse_matches)]
         logcosh_values = [(float(val), i) for i, val in enumerate(logcosh_matches)]
@@ -43,7 +48,6 @@ def update_model_results_ranking():
         logcosh_sorted = sorted(logcosh_values, key=lambda x: x[0])
         huber_sorted = sorted(huber_values, key=lambda x: x[0])
 
-        # Create ranking dictionaries
         mae_rankings = {}
         mse_rankings = {}
         logcosh_rankings = {}
@@ -61,14 +65,15 @@ def update_model_results_ranking():
         # Compute average rank (excluding MSE)
         avg_ranks = {}
         n_models = len(mae_matches)
-        # Use numpy mean, so import numpy if not already imported
-        import numpy as np
+
         for i in range(n_models):
-            avg_ranks[i] = np.mean([
-                mae_rankings.get(i, n_models+1),
-                logcosh_rankings.get(i, n_models+1),
-                huber_rankings.get(i, n_models+1)
-            ])
+            avg_ranks[i] = np.mean(
+                [
+                    mae_rankings.get(i, n_models + 1),
+                    logcosh_rankings.get(i, n_models + 1),
+                    huber_rankings.get(i, n_models + 1),
+                ]
+            )
 
         # Update content with rankings
         updated_content = content
@@ -77,7 +82,9 @@ def update_model_results_ranking():
         for i, match in enumerate(reversed(mae_matches_with_positions)):
             original_index = len(mae_matches_with_positions) - 1 - i
             ranking = mae_rankings[original_index]
-            new_text = f"### Test Loss (MAE): {mae_matches[original_index]} (Rank: {ranking})"
+            new_text = (
+                f"### Test Loss (MAE): {mae_matches[original_index]} (Rank: {ranking})"
+            )
             updated_content = (
                 updated_content[: match.start()]
                 + new_text
@@ -97,7 +104,9 @@ def update_model_results_ranking():
             )
 
         # Replace Log-Cosh entries with rankings
-        logcosh_matches_with_positions = list(re.finditer(logcosh_pattern, updated_content))
+        logcosh_matches_with_positions = list(
+            re.finditer(logcosh_pattern, updated_content)
+        )
         for i, match in enumerate(reversed(logcosh_matches_with_positions)):
             original_index = len(logcosh_matches_with_positions) - 1 - i
             ranking = logcosh_rankings[original_index]
@@ -113,7 +122,9 @@ def update_model_results_ranking():
         for i, match in enumerate(reversed(huber_matches_with_positions)):
             original_index = len(huber_matches_with_positions) - 1 - i
             ranking = huber_rankings[original_index]
-            new_text = f"### Test Huber: {huber_matches[original_index]} (Rank: {ranking})"
+            new_text = (
+                f"### Test Huber: {huber_matches[original_index]} (Rank: {ranking})"
+            )
             updated_content = (
                 updated_content[: match.start()]
                 + new_text
@@ -135,10 +146,6 @@ def update_model_results_ranking():
 
 
 def sort_models_by_average_rank():
-    """
-    Sort models in model_results.md based on average of MAE, Log-Cosh, and Huber ranks (excluding MSE) and rewrite the file.
-    Lower average rank is better.
-    """
     try:
         with open("model_results.md", "r", encoding="utf-8") as f:
             content = f.read()
@@ -155,8 +162,10 @@ def sort_models_by_average_rank():
             header = model_sections[0]
         model_sections.pop(0)
 
-        # Prepend the header back to each section
-        model_sections = ["# Model Training Results" + section for section in model_sections]
+        # attatch the header back to each section
+        model_sections = [
+            "# Model Training Results" + section for section in model_sections
+        ]
 
         # Dictionary to store model sections with their average ranks
         model_ranks = {}

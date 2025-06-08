@@ -33,6 +33,9 @@ tf.random.set_seed(42)
 __start_time = time.time()
 print("------- Preparing the data...")
 df = pd.read_csv("final_df.csv")
+# Store ids for later use
+player_ids = df["player_id"].copy()
+
 df = df.sort_values(by=["gw", "player_id"], ascending=True)
 
 # Drop the id columns until i find a better way to handle them
@@ -104,7 +107,7 @@ EPOCHS: int = 100
 BATCH_SIZE: int = 64
 DROPOUT_RATE: float = 0.3
 IS_L2_REGULARIZATION: bool = False
-L2_REGULARIZATION_RATE: float = 0.01 if IS_L2_REGULARIZATION else 0.0
+L2_REGULARIZATION_RATE: float = 0.05 if IS_L2_REGULARIZATION else 0.0
 HUBER_DELTA: float = 1.5
 
 # Define the model
@@ -142,15 +145,15 @@ model = keras.models.Sequential(
                 else None
             ),
         ),
-        # Dense(
-        #     16,
-        #     activation="relu",
-        #     kernel_regularizer=(
-        #         keras.regularizers.l2(L2_REGULARIZATION_RATE)
-        #         if IS_L2_REGULARIZATION
-        #         else None
-        #     ),
-        # ),
+        Dense(
+            16,
+            activation="relu",
+            kernel_regularizer=(
+                keras.regularizers.l2(L2_REGULARIZATION_RATE)
+                if IS_L2_REGULARIZATION
+                else None
+            ),
+        ),
         Dense(1, activation="linear"),
     ]
 )
@@ -319,3 +322,21 @@ with open("model_results.md", "a", encoding="utf-8") as f:
 
 # Update rankings in the model results markdown file
 update_model_results_ranking()
+
+
+# Do some predictions
+predictions = model.predict(X_test_processed)
+predictions_df = pd.DataFrame(predictions, columns=["predicted_points"])
+# Combine predictions with the test set
+test_results = pd.concat(
+    [
+        X_test_processed[["gw"]].reset_index(drop=True),
+        predictions_df,
+        player_ids[X_test_processed.index].reset_index(drop=True),
+        y_test.reset_index(drop=True),
+    ],
+    axis=1,
+)
+# Save predictions to a CSV file
+os.makedirs("predictions", exist_ok=True)
+test_results.to_csv("predictions/test_df_predictions.csv", index=False)
