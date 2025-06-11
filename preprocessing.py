@@ -340,74 +340,32 @@ def get_last_x_players_gw(
         )
         last_x_gameweeks = max(merged_gw["gw"])
 
-    merged_gw = merged_gw.copy()
-    merged_gw = merged_gw.drop(
-        columns=[
-            "was_home",
-            "opponent_team_id",
-            "team_id",
-            "in_starting_xi",
-        ]
-    )
-
-    data = []
-    # Loop through each player and gameweeks that player played in
-    for player_id in merged_gw["player_id"].unique():
-        player_df = merged_gw[merged_gw["player_id"] == player_id]
-
-        played_gameweeks = player_df["gw"].unique().tolist()
-
-        player_gw_dfs = []
-        for gw in played_gameweeks:
-            # Get the 3 gameweeks the player played in before the current gameweek
-            gws_before_current = sorted(
-                [g for g in played_gameweeks if g < gw], reverse=True
-            )[-last_x_gameweeks:]
-            if len(gws_before_current) == 0:
-                continue
-            # If the player has played less than last_x_gameweeks prior to 'gw', use all available gameweeks
-            elif len(gws_before_current) < last_x_gameweeks:
-                gws_before_current = sorted(gws_before_current, reverse=True)
-
-            # Get the data for the last x gameweeks
-            last_x_df = player_df[player_df["gw"].isin(gws_before_current)].drop(
-                columns=["gw"]
-            )
-
-            # Sum the stats for the last x gameweeks
-            last_x_df = last_x_df.groupby("player_id").sum().reset_index()
-            last_x_df.loc[:, "gw"] = gw
-
-            player_gw_dfs.append(last_x_df)
-
-        # If the player has no data for the last x gameweeks, skip
-        if len(player_gw_dfs) == 0:
-            print(
-                f"Player {player_id} has no data for last {last_x_gameweeks} gameweeks."
-            )
-            continue
-
-        # Concatenate the data for the player across all gameweeks
-        player_df = pd.concat(player_gw_dfs, ignore_index=True)
-        data.append(player_df)
-
-    if len(data) == 0:
-        print(f"No data found for last {last_x_gameweeks} gameweeks.")
-        return pd.DataFrame()
-
-    final_df = pd.concat(data, ignore_index=True)
-
-    final_df.columns = [
-        (
-            col + f"_last_{last_x_gameweeks}"
-            if col not in ["player_id", "gw", "team_id", "opponent_team_id"]
-            else col
-        )
-        for col in final_df.columns
+    # columns to sum and columns to keep
+    id_cols = ["player_id", "gw"]
+    cols_to_drop = ["was_home", "opponent_team_id", "team_id", "in_starting_xi"]
+    stat_cols = [
+        col for col in merged_gw.columns if col not in (id_cols + cols_to_drop)
     ]
 
-    # final_df.to_csv(f"last_{last_x_gameweeks}_players_gw.csv", index=False)
-    return final_df
+    df = merged_gw[id_cols + stat_cols].copy()
+    df.set_index(id_cols, inplace=True)  # Set index by player and gameweek
+    df = df.sort_values(by=["player_id", "gw"])
+
+    # Create rolling sums for each player
+    # use level here because player_id is index
+    rolling_sum = (
+        df.groupby(level="player_id")[stat_cols]
+        .rolling(window=3, min_periods=1, closed="left")
+        .sum()
+    )
+
+    rolling_sum.columns = [f"{col}_last_{3}" for col in rolling_sum.columns]
+
+    rolling_sum = rolling_sum.reset_index(level=0, drop=True)
+
+    df = df.join(rolling_sum, how="left").reset_index()
+
+    return df
 
 
 @time_function  # 200 seconds
