@@ -322,9 +322,7 @@ def get_players_season_data(season: str = SEASON) -> pd.DataFrame:
     return df
 
 
-def get_last_x_players_gw(
-    merged_gw: pd.DataFrame, last_x_gameweeks: int
-) -> pd.DataFrame:
+def get_last_x_players_gw(merged_gw: pd.DataFrame, lag: int) -> pd.DataFrame:
     """
     Get the sum of stats last x gameweeks for each player in the merged DataFrame.
     Args:
@@ -333,12 +331,12 @@ def get_last_x_players_gw(
     Returns:
         pd.DataFrame: DataFrame containing player statistics for the last x gameweeks.
     """
-    print(f"Getting player stats with lag {last_x_gameweeks}...")
-    if last_x_gameweeks > max(merged_gw["gw"]):
+    print(f"Getting player stats with lag {lag}...")
+    if lag > max(merged_gw["gw"]):
         print(
-            f"Warning: last_x_gameweeks ({last_x_gameweeks}) is greater than the number of gameweeks available ({len(merged_gw)}). Using all available gameweeks."
+            f"Warning: last_x_gameweeks ({lag}) is greater than the number of gameweeks available ({len(merged_gw)}). Using all available gameweeks."
         )
-        last_x_gameweeks = max(merged_gw["gw"])
+        lag = max(merged_gw["gw"])
 
     # columns to sum and columns to keep
     id_cols = ["player_id", "gw"]
@@ -355,17 +353,20 @@ def get_last_x_players_gw(
     # use level here because player_id is index
     rolling_sum = (
         df.groupby(level="player_id")[stat_cols]
-        .rolling(window=3, min_periods=1, closed="left")
+        .rolling(window=lag, min_periods=1, closed="left")
         .sum()
     )
-
-    rolling_sum.columns = [f"{col}_last_{3}" for col in rolling_sum.columns]
-
+    rolling_sum.columns = [f"{col}_last_{lag}" for col in rolling_sum.columns]
+    # Reset index to remove the extra player_id level
     rolling_sum = rolling_sum.reset_index(level=0, drop=True)
 
-    df = df.join(rolling_sum, how="left").reset_index()
+    # reset again to get player_id and gw back as columns
+    rolling_sum = rolling_sum.reset_index()
 
-    return df
+    # Drop na values (first gameweek for each player will have NaN values)
+    rolling_sum.dropna(inplace=True)
+
+    return rolling_sum
 
 
 @time_function  # 200 seconds
@@ -378,12 +379,14 @@ def main():
     # Get the last x gameweeks for each player
     for lag in [3, 5, 10]:
         players_df = get_last_x_players_gw(merged_gw, lag)
+        print(f"Shape of players_df for lag {lag}: {players_df.shape}")
         final_df = pd.merge(
             final_df,
             players_df,
             on=["player_id", "gw"],
             how="left",
         )
+        print(f"Added last {lag} gameweeks stats for players. Shape: {final_df.shape}")
 
     # Nulls are players that didn't play in the last x gameweeks and players with blank gameweeks
     # and players that joined mid-season
@@ -425,7 +428,9 @@ def main():
         how="left",
     )
 
-    final_df.to_csv("final_df.csv", index=False)
+    # final_df.to_csv("final_df.csv", index=False)
+    print(f"Final DataFrame shape: {final_df.shape}")
+    print("Preprocessing complete.")
 
 
 if __name__ == "__main__":
