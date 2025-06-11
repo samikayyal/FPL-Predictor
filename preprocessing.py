@@ -207,14 +207,9 @@ def get_team_stats_df(season: str = SEASON, lag: int = 10) -> pd.DataFrame:
         team_gw_dfs = []
         for gw in played_gameweeks:
             # Get the gameweeks the team played in before the current gameweek
-            gws_before_current = sorted(
-                [g for g in played_gameweeks if g < gw], reverse=True
-            )[-lag:]
+            gws_before_current = sorted([g for g in played_gameweeks if g < gw])[-lag:]
             if len(gws_before_current) == 0:
                 continue
-            # If the team has played less than last_x_gameweeks prior to 'gw', use all available gameweeks
-            elif len(gws_before_current) < lag:
-                gws_before_current = sorted(gws_before_current, reverse=True)
 
             # Get the data for the last x gameweeks
             last_x_df = team_df[team_df["gw"].isin(gws_before_current)].drop(
@@ -339,8 +334,8 @@ def get_last_x_players_gw(merged_gw: pd.DataFrame, lag: int) -> pd.DataFrame:
         lag = max(merged_gw["gw"])
 
     # columns to sum and columns to keep
-    id_cols = ["player_id", "gw"]
-    cols_to_drop = ["was_home", "opponent_team_id", "team_id", "in_starting_xi"]
+    id_cols = ["player_id", "gw", "opponent_team_id"]
+    cols_to_drop = ["was_home", "team_id", "in_starting_xi"]
     stat_cols = [
         col for col in merged_gw.columns if col not in (id_cols + cols_to_drop)
     ]
@@ -380,10 +375,11 @@ def main():
     for lag in [3, 5, 10]:
         players_df = get_last_x_players_gw(merged_gw, lag)
         print(f"Shape of players_df for lag {lag}: {players_df.shape}")
+        print(f"Columns in players_df for lag {lag}: {players_df.columns.tolist()}")
         final_df = pd.merge(
             final_df,
             players_df,
-            on=["player_id", "gw"],
+            on=["player_id", "gw", "opponent_team_id"],
             how="left",
         )
         print(f"Added last {lag} gameweeks stats for players. Shape: {final_df.shape}")
