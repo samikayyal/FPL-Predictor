@@ -44,6 +44,16 @@ df = df.drop(columns=["player_id", "team_id", "opponent_team_id"])
 # convert bool columns to int
 df = df.apply(lambda x: x.astype(int) if x.dtype == "bool" else x)
 
+# =========================
+# Trying to manipulate the data to improve the model
+# =========================
+
+df = df[df.minutes_season > 100]  # Filter out players with less than 100 minutes played
+
+# =========================
+# Scaling and Splitting the Data
+# =========================
+
 # Split the data into 70% train, 15% validation, and 15% test sets
 n_gws = int(df.gw.nunique())
 train_end = int(n_gws * 0.7)
@@ -102,7 +112,7 @@ print(f"X_test_processed shape: {X_test_processed.shape}")
 # ================================
 
 # ==== Hyperparameters ====
-LEARNING_RATE: float = 0.0001
+LEARNING_RATE: float = 0.00005
 EPOCHS: int = 100
 BATCH_SIZE: int = 64
 DROPOUT_RATE: float = 0.3

@@ -1,4 +1,5 @@
 import pandas as pd
+import requests
 from rapidfuzz import fuzz, process
 
 from utils.constants import SEASON
@@ -42,7 +43,7 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
     return player_id.values[0]
 
 
-def get_player_name(player_id: int, season: str) -> str:
+def get_player_name(player_id: int, season: str = SEASON) -> str:
     """
     Get the player name from the player ID.
     Args:
@@ -276,3 +277,22 @@ def team_was_home(
         return True
 
     return False
+
+
+def get_current_player_prices() -> pd.DataFrame:
+    """
+    Get the current player prices from the players_ids.csv file.
+    Returns:
+        pd.DataFrame: DataFrame containing player IDs and their current prices.
+    """
+    res = requests.get("https://fantasy.premierleague.com/api/bootstrap-static/")
+    data = res.json()
+    players = data["elements"]
+    df = pd.DataFrame(players)[["id", "now_cost"]].copy()
+    df.rename(columns={"now_cost": "current_cost", "id": "player_id"}, inplace=True)
+
+    # Scale for prices out of 100 instead of 1000
+    df["current_cost"] = df["current_cost"] / 10.0
+    df["current_cost"] = df["current_cost"].astype(float)
+
+    return df
