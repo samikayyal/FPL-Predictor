@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from tensorflow import keras
 from tensorflow.keras.layers import (  # type: ignore
     BatchNormalization,
@@ -83,9 +83,8 @@ y_test = test_df["total_points"]
 
 # Standardize the data
 print("\n------- Standardizing the data...")
-# try standard scaling and min-max scaling
-scaler = MinMaxScaler()  # You can switch to StandardScaler() if needed
-# scaler = StandardScaler()
+
+scaler = MinMaxScaler()
 
 
 cols_to_scale = [col for col in X_train.columns if col != "gw"]
