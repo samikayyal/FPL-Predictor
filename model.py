@@ -47,7 +47,7 @@ df = df.apply(lambda x: x.astype(int) if x.dtype == "bool" else x)
 # Trying to manipulate the data to improve the model
 # =========================
 
-# df = df[df.minutes_season > 100]  # Filter out players with less than 100 minutes played
+# df = df[df.minutes_season > 100]  # Filter out players with less than 100 minutes played didnt work
 
 # One hot encode team column (if i remove one hot then this drop it from the data)
 team_dummies = pd.get_dummies(df["team_id"], prefix="team")
