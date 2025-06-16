@@ -208,7 +208,7 @@ def get_team_stats_df(season: str = SEASON, lag: int = 10) -> pd.DataFrame:
         for gw in played_gameweeks:
             # Get the gameweeks the team played in before the current gameweek
             gws_before_current = sorted([g for g in played_gameweeks if g < gw])[-lag:]
-            if len(gws_before_current) == 0:
+            if not gws_before_current:
                 continue
 
             # Get the data for the last x gameweeks
@@ -372,10 +372,9 @@ def main():
     ].copy()
 
     # Get the last x gameweeks for each player
+    print("----------- Getting last x gameweeks for players ----------")
     for lag in [3, 5, 10]:
         players_df = get_last_x_players_gw(merged_gw, lag)
-        print(f"Shape of players_df for lag {lag}: {players_df.shape}")
-        print(f"Columns in players_df for lag {lag}: {players_df.columns.tolist()}")
         final_df = pd.merge(
             final_df,
             players_df,
@@ -388,10 +387,12 @@ def main():
     # and players that joined mid-season
     # We can drop these rows as they are not useful
     final_df.dropna(inplace=True)
-
+    final_df.to_csv("temp.csv", index=False)
     # # Merge with team stats
+    print("----------- Getting last x gameweeks for teams ----------")
     for lag in [3, 5, 10]:
         team_df = get_team_stats_df(lag=lag)
+        print("Team df nulls:", team_df.isnull().sum().sum())
         final_df = pd.merge(
             final_df,
             team_df,
@@ -412,10 +413,15 @@ def main():
         )
         final_df.drop(columns=["team_id_drop"], inplace=True)
 
+        print(
+            f"Added last {lag} gameweeks stats for teams. Shape: {final_df.shape}, Nulls: {final_df.isnull().sum().sum()}"
+        )
+
     # For now drop na, i have to fix the data gathering to ensure that all teams have data for all gameweeks
     final_df.dropna(inplace=True)
 
     # Merge with players season data which includes positions
+    print("----------- Merging with players season data ----------")
     players_season_df = get_players_season_data()
     final_df = pd.merge(
         final_df,
@@ -424,7 +430,7 @@ def main():
         how="left",
     )
 
-    # final_df.to_csv("final_df.csv", index=False)
+    final_df.to_csv("final_df.csv", index=False)
     print(f"Final DataFrame shape: {final_df.shape}")
     print("Preprocessing complete.")
 

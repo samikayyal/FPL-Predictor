@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from tensorflow import keras
 from tensorflow.keras.layers import (  # type: ignore
     BatchNormalization,
@@ -17,11 +17,10 @@ from tensorflow.keras.layers import (  # type: ignore
 
 from utils.model_results_utils import (
     check_duplicate_config,
+    sort_models_by_average_rank,
     update_model_results_ranking,
     write_model_config,
 )
-
-_PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Set random seeds for reproducibility
 np.random.seed(42)
@@ -39,7 +38,7 @@ player_ids = df["player_id"].copy()
 df = df.sort_values(by=["gw", "player_id"], ascending=True)
 
 # Drop the id columns until i find a better way to handle them
-df = df.drop(columns=["player_id", "team_id", "opponent_team_id"])
+df = df.drop(columns=["player_id", "opponent_team_id"])
 
 # convert bool columns to int
 df = df.apply(lambda x: x.astype(int) if x.dtype == "bool" else x)
@@ -48,7 +47,14 @@ df = df.apply(lambda x: x.astype(int) if x.dtype == "bool" else x)
 # Trying to manipulate the data to improve the model
 # =========================
 
-df = df[df.minutes_season > 100]  # Filter out players with less than 100 minutes played
+# df = df[df.minutes_season > 100]  # Filter out players with less than 100 minutes played
+
+# One hot encode team column (if i remove one hot then this drop it from the data)
+team_dummies = pd.get_dummies(df["team_id"], prefix="team")
+df = pd.concat([df, team_dummies], axis=1)
+
+# Drop the original team_id column
+df = df.drop(columns=["team_id"])
 
 # =========================
 # Scaling and Splitting the Data
@@ -77,7 +83,10 @@ y_test = test_df["total_points"]
 
 # Standardize the data
 print("\n------- Standardizing the data...")
-scaler = StandardScaler()
+# try standard scaling and min-max scaling
+scaler = MinMaxScaler()  # You can switch to StandardScaler() if needed
+# scaler = StandardScaler()
+
 
 cols_to_scale = [col for col in X_train.columns if col != "gw"]
 
@@ -112,12 +121,12 @@ print(f"X_test_processed shape: {X_test_processed.shape}")
 # ================================
 
 # ==== Hyperparameters ====
-LEARNING_RATE: float = 0.00005
+LEARNING_RATE: float = 0.0003
 EPOCHS: int = 100
 BATCH_SIZE: int = 64
-DROPOUT_RATE: float = 0.3
-IS_L2_REGULARIZATION: bool = False
-L2_REGULARIZATION_RATE: float = 0.05 if IS_L2_REGULARIZATION else 0.0
+DROPOUT_RATE: float = 0.4
+IS_L2_REGULARIZATION: bool = True
+L2_REGULARIZATION_RATE: float = 1e-04 if IS_L2_REGULARIZATION else 0.0
 HUBER_DELTA: float = 1.5
 
 # Define the model
@@ -144,19 +153,21 @@ model = keras.models.Sequential(
                 else None
             ),
         ),
+        # BatchNormalization(),
+        # Dropout(DROPOUT_RATE),
+        # Dense(
+        #     64,
+        #     activation="relu",
+        #     kernel_regularizer=(
+        #         keras.regularizers.l2(L2_REGULARIZATION_RATE)
+        #         if IS_L2_REGULARIZATION
+        #         else None
+        #     ),
+        # ),
         BatchNormalization(),
         Dropout(DROPOUT_RATE),
         Dense(
             32,
-            activation="relu",
-            kernel_regularizer=(
-                keras.regularizers.l2(L2_REGULARIZATION_RATE)
-                if IS_L2_REGULARIZATION
-                else None
-            ),
-        ),
-        Dense(
-            16,
             activation="relu",
             kernel_regularizer=(
                 keras.regularizers.l2(L2_REGULARIZATION_RATE)
@@ -327,21 +338,4 @@ with open("model_results.md", "a", encoding="utf-8") as f:
 
 # Update rankings in the model results markdown file
 update_model_results_ranking()
-
-
-# Do some predictions
-predictions = model.predict(X_test_processed)
-predictions_df = pd.DataFrame(predictions, columns=["predicted_points"])
-# Combine predictions with the test set
-test_results = pd.concat(
-    [
-        X_test_processed[["gw"]].reset_index(drop=True),
-        predictions_df,
-        player_ids[X_test_processed.index].reset_index(drop=True),
-        y_test.reset_index(drop=True),
-    ],
-    axis=1,
-)
-# Save predictions to a CSV file
-os.makedirs("predictions", exist_ok=True)
-test_results.to_csv("predictions/test_df_predictions.csv", index=False)
+sort_models_by_average_rank()

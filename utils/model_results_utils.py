@@ -285,4 +285,4 @@ def check_duplicate_config(config: dict, model):
 
 if __name__ == "__main__":
     update_model_results_ranking()
-    # sort_models_by_average_rank()
+    sort_models_by_average_rank()

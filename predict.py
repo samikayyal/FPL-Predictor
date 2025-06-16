@@ -16,9 +16,7 @@ def get_features(gameweek: int) -> tuple[pd.DataFrame, pd.Series]:
 
     ids = df["player_id"]
 
-    features = df.drop(
-        columns=["player_id", "team_id", "opponent_team_id", "total_points"]
-    )
+    features = df.drop(columns=["player_id", "opponent_team_id", "total_points"])
 
     # Standardize the features
     # but not the gameweek column
@@ -33,7 +31,12 @@ def get_features(gameweek: int) -> tuple[pd.DataFrame, pd.Series]:
         ],
         axis=1,
     )
-    features.to_csv("temp.csv", index=False)
+
+    # get dummies for team_id
+    team_dummies = pd.get_dummies(features["team_id"], prefix="team")
+    features = pd.concat([features, team_dummies], axis=1)
+    features = features.drop(columns=["team_id"])
+
     return features, ids
 
 
@@ -180,6 +183,13 @@ def get_best_xi(best_15) -> dict:
         4: 1,  # Forwards
     }
 
+    max_positions = {
+        1: 1,  # Goalkeepers
+        2: 5,  # Defenders
+        3: 5,  # Midfielders
+        4: 3,  # Forwards
+    }
+
     positions_df = pd.read_csv(get_data_path(SEASON, "players_season_data.csv"))
     positions_df = positions_df[["player_id", "element_type"]]
     positions_df.rename(columns={"element_type": "position"}, inplace=True)
@@ -199,7 +209,7 @@ def get_best_xi(best_15) -> dict:
         "Total_Predicted_Points",
     )
 
-    # Constraints: position limits
+    # Constraints:min position limits
     for position, limit in min_positions.items():
         model += (
             lpSum(
@@ -211,7 +221,22 @@ def get_best_xi(best_15) -> dict:
                 == position
             )
             >= limit,
-            f"Position_{position}_Constraint",
+            f"Min_Position_{position}_Constraint",
+        )
+
+    # Constraints: max position limits
+    for position, limit in max_positions.items():
+        model += (
+            lpSum(
+                player_vars[player_id]
+                for player_id in best_15.keys()
+                if positions_df.loc[
+                    positions_df["player_id"] == player_id, "position"
+                ].values[0]
+                == position
+            )
+            <= limit,
+            f"Max_Position_{position}_Constraint",
         )
 
     # Constraints: total number of players must be 11
