@@ -23,7 +23,6 @@ from utils.constants import (  # noqa: E402
 from utils.general import (  # noqa: E402
     get_data_path,
     get_fbref_table_data,
-    get_new_data_path,
     time_function,
 )
 
@@ -282,4 +281,4 @@ def scrape_prem_teams_season_data(season: str) -> pd.DataFrame:
 if __name__ == "__main__":
     season: str = "2024-25"
     df = scrape_prem_teams_season_data(season)
-    df.to_csv(get_new_data_path(season, "teams_season.csv"))
+    df.to_csv(get_data_path(season, "teams_season.csv"))

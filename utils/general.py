@@ -55,11 +55,6 @@ _PROJECT_ROOT = os.path.abspath(os.path.join(_SCRIPT_DIR, ".."))
 
 
 def get_data_path(season: str, *args) -> str:
-    """Constructs the absolute path to a data file in the mydata directory."""
-    return os.path.join(_PROJECT_ROOT, "mydata", season, *args)
-
-
-def get_new_data_path(season: str, *args) -> str:
     """Constructs the absolute path to a new data file in the mydata directory."""
     return os.path.join(_PROJECT_ROOT, "data", season, *args)
 

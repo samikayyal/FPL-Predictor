@@ -18,7 +18,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(project_root)
 
 from utils.constants import SEASON  # noqa: E402
-from utils.general import get_new_data_path, time_function  # noqa: E402
+from utils.general import get_data_path, time_function  # noqa: E402
 from utils.get_ids import (  # noqa: E402
     external_team_name_to_fpl_name,
     get_fbref_player_id,
@@ -477,11 +477,11 @@ def scrape_prem_fixtures(season: str, gw_start: int, gw_end: int):
     for stat_type, gws in gws_data.items():
         for gw, df in gws.items():
             os.makedirs(
-                get_new_data_path(season, f"gws_{stat_type.name.lower()}"),
+                get_data_path(season, f"gws_{stat_type.name.lower()}"),
                 exist_ok=True,
             )
             df.to_csv(
-                get_new_data_path(
+                get_data_path(
                     season,
                     f"gws_{stat_type.name.lower()}",
                     f"gw{gw}.csv",
@@ -493,11 +493,11 @@ def scrape_prem_fixtures(season: str, gw_start: int, gw_end: int):
     # Save team data
     for gw, df in team_gws_data.items():
         os.makedirs(
-            get_new_data_path(season, "team_gws"),
+            get_data_path(season, "team_gws"),
             exist_ok=True,
         )
         df.to_csv(
-            get_new_data_path(
+            get_data_path(
                 season,
                 "team_gws",
                 f"gw{gw}.csv",
