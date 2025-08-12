@@ -2,13 +2,18 @@ import pandas as pd
 import requests
 from rapidfuzz import fuzz, process
 
-from utils.constants import SEASON
+from utils.constants import LAST_SEASON, SEASON
 from utils.general import get_data_path, normalize_name
 
 # Preload CSVs for the current season to improve performance
-PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
-TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
-FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
+# PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
+# TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
+# FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
+
+# Preload CSVs for the last season to improve performance
+LAST_SEASON_PLAYERS_IDS_DF = pd.read_csv(get_data_path(LAST_SEASON, "players_ids.csv"))
+LAST_SEASON_TEAMS_IDS_DF = pd.read_csv(get_data_path(LAST_SEASON, "teams_ids.csv"))
+LAST_SEASON_FIXTURES_DF = pd.read_csv(get_data_path(LAST_SEASON, "fixtures.csv"))
 
 
 def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
@@ -32,6 +37,8 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
 
     if season == SEASON:
         df = PLAYERS_IDS_DF
+    elif season == LAST_SEASON:
+        df = LAST_SEASON_PLAYERS_IDS_DF
     else:
         df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     player_id = df.loc[df[name_type] == player_name, "id"]
@@ -54,6 +61,8 @@ def get_player_name(player_id: int, season: str = SEASON) -> str:
     """
     if season == SEASON:
         df = PLAYERS_IDS_DF
+    elif season == LAST_SEASON:
+        df = LAST_SEASON_PLAYERS_IDS_DF
     else:
         df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     player_name = df.loc[df["id"] == player_id, "web_name"]
@@ -79,6 +88,8 @@ def get_team_id(team_name: str, name_type: str, season: str) -> int | None:
 
     if season == SEASON:
         df = TEAMS_IDS_DF
+    elif season == LAST_SEASON:
+        df = LAST_SEASON_TEAMS_IDS_DF
     else:
         df = pd.read_csv(get_data_path(season, "teams_ids.csv"))
 
@@ -102,6 +113,8 @@ def get_team_name(team_id: int, season: str) -> str:
     """
     if season == SEASON:
         df = TEAMS_IDS_DF
+    elif season == LAST_SEASON:
+        df = LAST_SEASON_TEAMS_IDS_DF
     else:
         df = pd.read_csv(get_data_path(season, "teams_ids.csv"))
     team_name = df.loc[df["id"] == team_id, "name"]
@@ -152,6 +165,8 @@ def get_player_team(player_id: int, season: str) -> int:
     """
     if season == SEASON:
         player_ids_df = PLAYERS_IDS_DF
+    elif season == LAST_SEASON:
+        player_ids_df = LAST_SEASON_PLAYERS_IDS_DF
     else:
         player_ids_df = pd.read_csv(get_data_path(season, "players_ids.csv"))
 
@@ -170,6 +185,8 @@ def get_match_gw(home_team_id: int, away_team_id: int, season: str) -> int:
     """
     if season == SEASON:
         fixtures = FIXTURES_DF
+    elif season == LAST_SEASON:
+        fixtures = LAST_SEASON_FIXTURES_DF
     else:
         fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
     match_gw = fixtures[
@@ -193,6 +210,8 @@ def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | No
 
     if season == SEASON:
         df = PLAYERS_IDS_DF
+    elif season == LAST_SEASON:
+        df = LAST_SEASON_PLAYERS_IDS_DF
     else:
         df = pd.read_csv(get_data_path(season, "players_ids.csv"))
     team_df = df[df["team"] == team_id]
@@ -243,6 +262,8 @@ def get_opponent_team_id(
 ):
     if season == SEASON:
         fixtures = FIXTURES_DF
+    elif season == LAST_SEASON:
+        fixtures = LAST_SEASON_FIXTURES_DF
     else:
         fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
     desired_gw = fixtures[fixtures.gw == gw]
@@ -264,6 +285,8 @@ def team_was_home(
 ) -> bool:
     if season == SEASON:
         fixtures = FIXTURES_DF
+    elif season == LAST_SEASON:
+        fixtures = LAST_SEASON_FIXTURES_DF
     else:
         fixtures = pd.read_csv(get_data_path(season, "fixtures.csv"))
     desired_gw = fixtures[fixtures.gw == gw]

@@ -3,6 +3,8 @@ import os
 import re
 import time
 
+import pandas as pd
+from bs4 import BeautifulSoup
 from unidecode import unidecode
 
 
@@ -57,6 +59,11 @@ def get_data_path(season: str, *args) -> str:
     return os.path.join(_PROJECT_ROOT, "mydata", season, *args)
 
 
+def get_new_data_path(season: str, *args) -> str:
+    """Constructs the absolute path to a new data file in the mydata directory."""
+    return os.path.join(_PROJECT_ROOT, "data", season, *args)
+
+
 def normalize_name(name: str) -> str:
     if not isinstance(name, str):
         return ""
@@ -67,3 +74,47 @@ def normalize_name(name: str) -> str:
     )  # Remove special characters except hyphen and space
     name = name.strip()  # Remove leading/trailing whitespace
     return name
+
+
+def get_fbref_table_data(soup: BeautifulSoup, find_by: dict, new_columns: list[str] | None = None) -> pd.DataFrame:
+    """
+    Extracts data from a table in the given BeautifulSoup object.
+    Args:
+        soup (BeautifulSoup): The BeautifulSoup object containing the HTML.
+        find_by (dict): A dictionary to find the table (e.g., {"id": "stats_squads_standard_for"}).
+        new_columns (list[str] | None): Optional list of new column names to set for the DataFrame.
+    """
+
+    table = soup.find("table", find_by)
+    if table is None:
+        print("No table found")
+        return pd.DataFrame()  # Return empty DataFrame if no table found
+
+    # Extract headers
+    thead = table.find("thead")
+    rows_in_thead = thead.find_all("tr")
+    if not rows_in_thead:
+        return pd.DataFrame()  # Return empty DataFrame if no header rows found
+
+    for row in rows_in_thead:
+        if row.get("class") and "over_header" not in row.get("class"):
+            continue
+        headers_row = row
+
+    headers = [th.text.strip() for th in headers_row.find_all("th")]
+    # Extract rows
+    rows = []
+    for row in table.find("tbody").find_all("tr"):
+        cells = row.find_all("td")
+        cells_text = [cell.text.strip() for cell in cells]
+        # if the squad name is weird
+        if row.find("th"):
+            cells_text.insert(0, row.find("th").find("a").text.strip())
+
+        rows.append(cells_text)
+
+    df = pd.DataFrame(rows, columns=headers)
+    if new_columns:
+        df.columns = new_columns
+    
+    return df
