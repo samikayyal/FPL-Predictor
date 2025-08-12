@@ -34,6 +34,104 @@ class FbrefStatType(IntEnum):
     DEFENSE = 4
 
 
+# Column names for fbref match data
+FBREF_MATCH_DATA__COLUMNS: dict[FbrefStatType, list[str]] = {
+    FbrefStatType.SUMMARY: [
+        "goals",
+        "assists",
+        "penalty_kicks_made",
+        "penalty_kicks_attempted",
+        "shots",
+        "shots_on_target",
+        "yellow_cards",
+        "red_cards",
+        "touches",
+        "tackles",
+        "interceptions",
+        "blocks",
+        "xG",
+        "npxG",
+        "xAG",
+        "shot_creating_actions",
+        "goal_creating_actions",
+        "total_completed_passes",
+        "total_attempted_passes",
+        "total_pass_completion_percentage",
+        "progressive_passes",
+        "carries",
+        "progressive_carries",
+        "attempted_takeons",
+        "successful_takeons",
+    ],
+    FbrefStatType.PASSING: [
+        "total_completed_passes",
+        "total_attempted_passes",
+        "total_pass_completion_percentage",
+        "total_passing_distance",
+        "progressive_passing_distance",
+        "short_completed_passes",
+        "short_attempted_passes",
+        "short_pass_completion_percentage",
+        "medium_completed_passes",
+        "medium_attempted_passes",
+        "medium_pass_completion_percentage",
+        "long_completed_passes",
+        "long_attempted_passes",
+        "long_pass_completion_percentage",
+        "assists",
+        "xAG",
+        "xA",
+        "key_passes",
+        "passes_into_final_third",
+        "passes_into_penalty_area",
+        "crosses_into_penalty_area",
+        "progressive_passes",
+    ],
+    FbrefStatType.POSSESSION: [
+        "touches",
+        "touches_in_def_pen",
+        "touches_in_def_3rd",
+        "touches_in_mid_3rd",
+        "touches_in_att_3rd",
+        "touches_in_att_pen",
+        "live_touches",
+        "attempted_takeons",
+        "successful_takeons",
+        "successful_takeon_percent",
+        "times_tackled_during_takeon",
+        "tackled_during_takeon_percentage",
+        "carries",
+        "total_carry_distance",
+        "progressive_carry_distance",
+        "progressive_carries",
+        "carries_into_final_third",
+        "carries_into_penalty_area",
+        "miscontrols",
+        "dispossessions",
+        "passes_received",
+        "progressive_passes_received",
+    ],
+    FbrefStatType.DEFENSE: [
+        "tackles",
+        "tackles_won",
+        "tackles_def_3rd",
+        "tackles_mid_3rd",
+        "tackles_att_3rd",
+        "dribblers_tackled",
+        "dribblers_challenged",
+        "percentage_of_dribblers_tackled",
+        "challenges_lost",
+        "blocks",
+        "shots_blocked",
+        "passes_blocked",
+        "interceptions",
+        "players_tackled_plus_interceptions",
+        "clearances",
+        "errors",
+    ],
+}
+
+
 def __scrape_individual_match_data(
     url: str,
     home_team_id: int,
@@ -44,108 +142,6 @@ def __scrape_individual_match_data(
     Scrape all stat types for a single match using one browser session.
     Returns a dict mapping FbrefStatType to DataFrame.
     """
-
-    def get_stat_specific_columns(stat_type: FbrefStatType) -> list[str]:
-        """Get the stat-specific column names for a given stat type."""
-        if stat_type == FbrefStatType.PASSING:
-            return [
-                "total_completed_passes",
-                "total_attempted_passes",
-                "total_pass_completion_percentage",
-                "total_passing_distance",
-                "progressive_passing_distance",
-                "short_completed_passes",
-                "short_attempted_passes",
-                "short_pass_completion_percentage",
-                "medium_completed_passes",
-                "medium_attempted_passes",
-                "medium_pass_completion_percentage",
-                "long_completed_passes",
-                "long_attempted_passes",
-                "long_pass_completion_percentage",
-                "assists",
-                "xAG",
-                "xA",
-                "key_passes",
-                "passes_into_final_third",
-                "passes_into_penalty_area",
-                "crosses_into_penalty_area",
-                "progressive_passes",
-            ]
-        elif stat_type == FbrefStatType.SUMMARY:
-            return [
-                "goals",
-                "assists",
-                "penalty_kicks_made",
-                "penalty_kicks_attempted",
-                "shots",
-                "shots_on_target",
-                "yellow_cards",
-                "red_cards",
-                "touches",
-                "tackles",
-                "interceptions",
-                "blocks",
-                "xG",
-                "npxG",
-                "xAG",
-                "shot_creating_actions",
-                "goal_creating_actions",
-                "total_completed_passes",
-                "total_attempted_passes",
-                "total_pass_completion_percentage",
-                "progressive_passes",
-                "carries",
-                "progressive_carries",
-                "attempted_takeons",
-                "successful_takeons",
-            ]
-        elif stat_type == FbrefStatType.POSSESSION:
-            return [
-                "touches",
-                "touches_in_def_pen",
-                "touches_in_def_3rd",
-                "touches_in_mid_3rd",
-                "touches_in_att_3rd",
-                "touches_in_att_pen",
-                "live_touches",
-                "attempted_takeons",
-                "successful_takeons",
-                "successful_takeon_percent",
-                "times_tackled_during_takeon",
-                "tackled_during_takeon_percentage",
-                "carries",
-                "total_carry_distance",
-                "progressive_carry_distance",
-                "progressive_carries",
-                "carries_into_final_third",
-                "carries_into_penalty_area",
-                "miscontrols",
-                "dispossessions",
-                "passes_received",
-                "progressive_passes_received",
-            ]
-        elif stat_type == FbrefStatType.DEFENSE:
-            return [
-                "tackles",
-                "tackles_won",
-                "tackles_def_3rd",
-                "tackles_mid_3rd",
-                "tackles_att_3rd",
-                "dribblers_tackled",
-                "dribblers_challenged",
-                "percentage_of_dribblers_tackled",
-                "challenges_lost",
-                "blocks",
-                "shots_blocked",
-                "passes_blocked",
-                "interceptions",
-                "players_tackled_plus_interceptions",
-                "clearances",
-                "errors",
-            ]
-        else:
-            return []
 
     result_dfs = {}
 
@@ -240,7 +236,7 @@ def __scrape_individual_match_data(
                     adf["was_home"] = False
 
             # Get stat-specific columns for this stat type
-            stat_specific_columns = get_stat_specific_columns(stat_type)
+            stat_specific_columns = FBREF_MATCH_DATA__COLUMNS[stat_type]
 
             for df in [
                 hdf,

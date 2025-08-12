@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import pandas as pd
 import requests
 from rapidfuzz import fuzz, process
@@ -6,9 +8,9 @@ from utils.constants import LAST_SEASON, SEASON
 from utils.general import get_data_path, normalize_name
 
 # Preload CSVs for the current season to improve performance
-# PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
-# TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
-# FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
+PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
+TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
+FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
 
 # Preload CSVs for the last season to improve performance
 LAST_SEASON_PLAYERS_IDS_DF = pd.read_csv(get_data_path(LAST_SEASON, "players_ids.csv"))
@@ -16,6 +18,7 @@ LAST_SEASON_TEAMS_IDS_DF = pd.read_csv(get_data_path(LAST_SEASON, "teams_ids.csv
 LAST_SEASON_FIXTURES_DF = pd.read_csv(get_data_path(LAST_SEASON, "fixtures.csv"))
 
 
+@lru_cache(maxsize=None)
 def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
     """
     Get the player ID from the player name.
@@ -50,6 +53,7 @@ def get_player_id(player_name: str, name_type: str, season: str) -> int | None:
     return player_id.values[0]
 
 
+@lru_cache(maxsize=None)
 def get_player_name(player_id: int, season: str = SEASON) -> str:
     """
     Get the player name from the player ID.
@@ -73,6 +77,7 @@ def get_player_name(player_id: int, season: str = SEASON) -> str:
     return player_name.values[0]
 
 
+@lru_cache(maxsize=None)
 def get_team_id(team_name: str, name_type: str, season: str) -> int | None:
     """
     Get the team ID from the team name.
@@ -102,6 +107,7 @@ def get_team_id(team_name: str, name_type: str, season: str) -> int | None:
     return team_id.values[0]
 
 
+@lru_cache(maxsize=None)
 def get_team_name(team_id: int, season: str) -> str:
     """
     Get the team name from the team ID.
@@ -154,6 +160,7 @@ def external_team_name_to_fpl_name(name: str) -> str:
     )  # Return the original name if not found
 
 
+@lru_cache(maxsize=None)
 def get_player_team(player_id: int, season: str) -> int:
     """
     Get the team name from the player ID.
@@ -179,6 +186,7 @@ def get_player_team(player_id: int, season: str) -> int:
     return int(team_id["team"].values[0])
 
 
+@lru_cache(maxsize=None)
 def get_match_gw(home_team_id: int, away_team_id: int, season: str) -> int:
     """
     Get the gameweek of a match.
@@ -196,6 +204,7 @@ def get_match_gw(home_team_id: int, away_team_id: int, season: str) -> int:
     return int(match_gw)
 
 
+@lru_cache(maxsize=None)
 def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | None:
     """
     Get the player ID from the player name.
@@ -255,6 +264,7 @@ def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | No
     return None
 
 
+@lru_cache(maxsize=None)
 def get_opponent_team_id(
     team_id: int,
     gw: int,
@@ -278,6 +288,7 @@ def get_opponent_team_id(
     return opponent_team_id.home_team_id.values[0]
 
 
+@lru_cache(maxsize=None)
 def team_was_home(
     team_id: int,
     gw: int,
@@ -302,6 +313,7 @@ def team_was_home(
     return False
 
 
+@lru_cache(maxsize=1)
 def get_current_player_prices() -> pd.DataFrame:
     """
     Get the current player prices from the players_ids.csv file.

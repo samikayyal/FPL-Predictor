@@ -271,7 +271,6 @@ def scrape_prem_teams_season_data(season: str) -> pd.DataFrame:
                 [fbref_data.reset_index(drop=True), possession_data], axis=1
             )
 
-
     except Exception as e:
         print(f"Error occurred while scraping team data: {e}")
     finally:
