@@ -391,4 +391,4 @@ def scrape_prem_fixtures(season: str, gw_start: int, gw_end: int):
 
 
 if __name__ == "__main__":
-    scrape_prem_fixtures("2024-25", 1, 1)
+    scrape_prem_fixtures("2024-25", 2, 37)

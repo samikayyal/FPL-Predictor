@@ -8,9 +8,9 @@ from utils.constants import LAST_SEASON, SEASON
 from utils.general import get_data_path, normalize_name
 
 # Preload CSVs for the current season to improve performance
-PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
-TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
-FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
+# PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
+# TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
+# FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
 
 # Preload CSVs for the last season to improve performance
 LAST_SEASON_PLAYERS_IDS_DF = pd.read_csv(get_data_path(LAST_SEASON, "players_ids.csv"))
@@ -293,7 +293,7 @@ def team_was_home(
     team_id: int,
     gw: int,
     season: str,
-) -> bool:
+) -> bool | None:
     if season == SEASON:
         fixtures = FIXTURES_DF
     elif season == LAST_SEASON:
