@@ -1,0 +1,686 @@
+id,first_name,second_name,web_name,team,full_name
+1,david,raya martin,raya,1,david raya martin
+2,kepa,arrizabalaga revuelta,arrizabalaga,1,kepa arrizabalaga revuelta
+3,karl,hein,hein,1,karl hein
+4,tommy,setford,setford,1,tommy setford
+5,gabriel,dos santos magalhaes,gabriel,1,gabriel dos santos magalhaes
+6,william,saliba,saliba,1,william saliba
+7,riccardo,calafiori,calafiori,1,riccardo calafiori
+8,jurrien,timber,jtimber,1,jurrien timber
+9,jakub,kiwior,kiwior,1,jakub kiwior
+10,myles,lewis-skelly,lewis-skelly,1,myles lewis-skelly
+11,benjamin,white,white,1,benjamin white
+12,oleksandr,zinchenko,zinchenko,1,oleksandr zinchenko
+13,brayden,clarke,clarke,1,brayden clarke
+14,maldini,kacurri,kacurri,1,maldini kacurri
+15,josh,nichols,nichols,1,josh nichols
+16,bukayo,saka,saka,1,bukayo saka
+17,martin,odegaard,odegaard,1,martin odegaard
+18,noni,madueke,madueke,1,noni madueke
+19,gabriel,martinelli silva,martinelli,1,gabriel martinelli silva
+20,leandro,trossard,trossard,1,leandro trossard
+21,declan,rice,rice,1,declan rice
+22,mikel,merino zazon,merino,1,mikel merino zazon
+23,fabio,ferreira vieira,fabio vieira,1,fabio ferreira vieira
+24,christian,norgaard,norgaard,1,christian norgaard
+25,ethan,nwaneri,nwaneri,1,ethan nwaneri
+26,martin,zubimendi ibanez,zubimendi,1,martin zubimendi ibanez
+27,reiss,nelson,nelson,1,reiss nelson
+28,ismeal,kabia,kabia,1,ismeal kabia
+29,albert,sambi lokonga,sambi,1,albert sambi lokonga
+30,kai,havertz,havertz,1,kai havertz
+31,gabriel,fernando de jesus,gjesus,1,gabriel fernando de jesus
+662,cristhian,mosquera,mosquera,1,cristhian mosquera
+666,viktor,gyokeres,gyokeres,1,viktor gyokeres
+32,emiliano,martinez romero,martinez,2,emiliano martinez romero
+33,marco,bizot,mbizot,2,marco bizot
+34,joe,gauci,gauci,2,joe gauci
+35,filip,marschall,marschall,2,filip marschall
+36,matty,cash,cash,2,matty cash
+37,lucas,digne,digne,2,lucas digne
+38,ezri,konsa ngoyo,konsa,2,ezri konsa ngoyo
+39,ian,maatsen,maatsen,2,ian maatsen
+40,tyrone,mings,mings,2,tyrone mings
+41,pau,torres,pau,2,pau torres
+42,andres,garcia,agarcia,2,andres garcia
+43,alex,moreno lopera,alex moreno,2,alex moreno lopera
+44,lamare,bogarde,bogarde,2,lamare bogarde
+45,lino,da cruz sousa,sousa,2,lino da cruz sousa
+46,yasin,ozcan,yasin,2,yasin ozcan
+47,morgan,rogers,rogers,2,morgan rogers
+48,youri,tielemans,tielemans,2,youri tielemans
+49,leon,bailey,bailey,2,leon bailey
+50,emiliano,buendia stati,buendia,2,emiliano buendia stati
+51,samuel,iling-junior,iling jr,2,samuel iling-junior
+52,jacob,ramsey,jramsey,2,jacob ramsey
+53,donyell,malen,malen,2,donyell malen
+54,john,mcginn,mcginn,2,john mcginn
+55,ross,barkley,barkley,2,ross barkley
+56,enzo,barrenechea,barrenechea,2,enzo barrenechea
+57,lewis,dobbin,dobbin,2,lewis dobbin
+58,boubacar,kamara,kamara,2,boubacar kamara
+59,amadou,onana,onana,2,amadou onana
+60,ben,broggio,broggio,2,ben broggio
+61,leander,dendoncker,dendoncker,2,leander dendoncker
+62,jamaldeen,jimoh-aloba,jimoh-aloba,2,jamaldeen jimoh-aloba
+63,kadan,young,young,2,kadan young
+64,ollie,watkins,watkins,2,ollie watkins
+65,zepiqueno,redmond,redmond,2,zepiqueno redmond
+677,evann,guessand,guessand,2,evann guessand
+183,max,weiss,weiss,3,max weiss
+184,etienne,green,green,3,etienne green
+185,vaclav,hladky,hladky,3,vaclav hladky
+186,connor,roberts,roberts,3,connor roberts
+187,kyle,walker,walker,3,kyle walker
+188,hannes,delcroix,delcroix,3,hannes delcroix
+189,owen,dodgson,dodgson,3,owen dodgson
+190,hjalmar,ekdal,ekdal,3,hjalmar ekdal
+191,maxime,esteve,esteve,3,maxime esteve
+192,quilindschy,hartman,hartman,3,quilindschy hartman
+193,bashir,humphreys,humphreys,3,bashir humphreys
+194,jordan,beyer,jordan,3,jordan beyer
+195,lucas,pires silva,lucas pires,3,lucas pires silva
+196,shurandy,sambo,sambo,3,shurandy sambo
+197,oliver,sonne,sonne,3,oliver sonne
+198,axel,tuanzebe,tuanzebe,3,axel tuanzebe
+199,joe,worrall,worrall,3,joe worrall
+200,jaidon,anthony,anthony,3,jaidon anthony
+201,manuel,benson hedilazio,benson,3,manuel benson hedilazio
+202,jacob,bruun larsen,bruun larsen,3,jacob bruun larsen
+203,enock,agyei,boateng,3,enock agyei
+204,darko,churlinov,churlinov,3,darko churlinov
+205,josh,cullen,cullen,3,josh cullen
+206,marcus,edwards,edwards,3,marcus edwards
+207,hannibal,mejbri,hannibal,3,hannibal mejbri
+208,luca,koleosho,koleosho,3,luca koleosho
+209,josh,laurent,laurent,3,josh laurent
+210,loum,tchaouna,tchaouna,3,loum tchaouna
+211,aaron,ramsey,aramsey,3,aaron ramsey
+212,oluwaseun,adewumi,adewumi,3,oluwaseun adewumi
+213,jaydon,banel,banel,3,jaydon banel
+214,mike,tresor ndayishimiye,tresor,3,mike tresor ndayishimiye
+215,zian,flemming,flemming,3,zian flemming
+216,zeki,amdouni,amdouni,3,zeki amdouni
+217,lyle,foster,foster,3,lyle foster
+218,ashley,barnes,barnes,3,ashley barnes
+219,michael,obafemi,obafemi,3,michael obafemi
+470,martin,dubravka,dubravka,3,martin dubravka
+676,lesley,ugochukwu,ugochukwu,3,lesley ugochukwu
+680,armando,broja,broja,3,armando broja
+66,norberto,murara neto,neto,4,norberto murara neto
+67,dorde,petrovic,petrovic,4,dorde petrovic
+68,will,dennis,dennis,4,will dennis
+69,callan,mckenna,mckenna,4,callan mckenna
+70,alex,paulsen,paulsen,4,alex paulsen
+71,illia,zabarnyi,zabarnyi,4,illia zabarnyi
+72,marcos,senesi baron,senesi,4,marcos senesi baron
+73,adam,smith,smith,4,adam smith
+74,adrien,truffert,truffert,4,adrien truffert
+75,matai,akinmboni,akinmboni,4,matai akinmboni
+76,owen,bevan,bevan,4,owen bevan
+77,james,hill,hill,4,james hill
+78,julian,araujo zuniga,jaraujo,4,julian araujo zuniga
+79,chris,mepham,mepham,4,chris mepham
+80,julio,soler barreto,soler,4,julio soler barreto
+81,justin,kluivert,kluivert,4,justin kluivert
+82,antoine,semenyo,semenyo,4,antoine semenyo
+83,dango,ouattara,odango,4,dango ouattara
+84,marcus,tavernier,tavernier,4,marcus tavernier
+85,tyler,adams,adams,4,tyler adams
+86,david,brooks,brooks,4,david brooks
+87,ryan,christie,christie,4,ryan christie
+88,lewis,cook,cook,4,lewis cook
+89,philip,billing,philip,4,philip billing
+90,alex,scott,scott,4,alex scott
+91,luis,sinisterra lucumi,sinisterra,4,luis sinisterra lucumi
+92,romain,faivre,faivre,4,romain faivre
+93,hamed,traore,htraore,4,hamed traore
+94,dominic,sadi,sadi,4,dominic sadi
+95,zain,silcott-duberry,silcott-duberry,4,zain silcott-duberry
+96,ben,winterburn,winterburn,4,ben winterburn
+97,francisco evanilson,de lima barbosa,evanilson,4,francisco evanilson de lima barbosa
+98,enes,unal,enes unal,4,enes unal
+99,daniel,adu-adjei,adu-adjei,4,daniel adu-adjei
+100,eli junior,kroupi,kroupijr,4,eli junior kroupi
+685,bafode,diakite,diakite,4,bafode diakite
+101,caoimhin,kelleher,kelleher,5,caoimhin kelleher
+102,ellery,balcombe,balcombe,5,ellery balcombe
+103,matthew,cox,cox,5,matthew cox
+104,julian,eyestone,eyestone,5,julian eyestone
+105,hakon rafn,valdimarsson,valdimarsson,5,hakon rafn valdimarsson
+106,nathan,collins,collins,5,nathan collins
+107,keane,lewis-potter,lewis-potter,5,keane lewis-potter
+108,kristoffer,ajer,ajer,5,kristoffer ajer
+109,rico,henry,henry,5,rico henry
+110,michael,kayode,kayode,5,michael kayode
+111,ethan,pinnock,pinnock,5,ethan pinnock
+112,mads,roerslev rasmussen,roerslev,5,mads roerslev rasmussen
+113,sepp,van den berg,van den berg,5,sepp van den berg
+114,benjamin,arthur,arthur,5,benjamin arthur
+115,benjamin,fredrick,fredrick,5,benjamin fredrick
+116,aaron,hickey,hickey,5,aaron hickey
+117,kim,ji-soo,ji-soo,5,kim ji-soo
+118,jayden,meghoma,meghoma,5,jayden meghoma
+120,kevin,schade,schade,5,kevin schade
+121,mikkel,damsgaard,damsgaard,5,mikkel damsgaard
+122,antoni,milambo,milambo,5,antoni milambo
+123,fabio,freitas gouveia carvalho,carvalho,5,fabio freitas gouveia carvalho
+124,jordan,henderson,henderson,5,jordan henderson
+125,vitaly,janelt,janelt,5,vitaly janelt
+126,mathias,jensen,jensen,5,mathias jensen
+127,gustavo,nunes fernandes gomes,nunes,5,gustavo nunes fernandes gomes
+128,frank,onyeka,onyeka,5,frank onyeka
+129,yehor,yarmoliuk,yarmoliuk,5,yehor yarmoliuk
+130,romelle,donovan,donovan,5,romelle donovan
+131,yunus emre,konak,konak,5,yunus emre konak
+132,paris,maghoma,maghoma,5,paris maghoma
+133,myles,peart-harris,peart-harris,5,myles peart-harris
+134,ryan,trevitt,trevitt,5,ryan trevitt
+135,yoane,wissa,wissa,5,yoane wissa
+136,igor thiago,nascimento rodrigues,thiago,5,igor thiago nascimento rodrigues
+137,iwan,morgan,morgan,5,iwan morgan
+138,jason,steele,steele,6,jason steele
+139,bart,verbruggen,verbruggen,6,bart verbruggen
+140,tom,mcgill,mcgill,6,tom mcgill
+141,carl,rushworth,rushworth,6,carl rushworth
+142,kjell,scherpen,scherpen,6,kjell scherpen
+143,olivier,boscagli,boscagli,6,olivier boscagli
+144,diego,coppola,coppola,6,diego coppola
+145,maxim,de cuyper,de cuyper,6,maxim de cuyper
+146,lewis,dunk,dunk,6,lewis dunk
+147,pervis,estupinan tenorio,estupinan,6,pervis estupinan tenorio
+148,ferdi,kadioglu,fkadioglu,6,ferdi kadioglu
+149,igor julio,dos santos de paulo,igor,6,igor julio dos santos de paulo
+150,tariq,lamptey,lamptey,6,tariq lamptey
+151,jan paul,van hecke,van hecke,6,jan paul van hecke
+152,joel,veltman,veltman,6,joel veltman
+153,adam,webster,webster,6,adam webster
+154,eiran,cashin,cashin,6,eiran cashin
+155,jacob,slater,slater,6,jacob slater
+156,charlie,tasker,tasker,6,charlie tasker
+157,mitoma,kaoru,mitoma,6,mitoma kaoru
+158,georginio,rutter,georginio,6,georginio rutter
+159,solly,march,march,6,solly march
+160,yankuba,minteh,minteh,6,yankuba minteh
+161,julio,enciso espinola,enciso,6,julio enciso espinola
+162,brajan,gruda,gruda,6,brajan gruda
+163,jack,hinshelwood,hinshelwood,6,jack hinshelwood
+164,matt,oriley,oriley,6,matt oriley
+165,abdallah,sima,sima,6,abdallah sima
+166,yasin,ayari,ayari,6,yasin ayari
+167,carlos,baleba,baleba,6,carlos baleba
+168,facundo,buonanotte,buonanotte,6,facundo buonanotte
+169,diego,gomez amarilla,gomez,6,diego gomez amarilla
+170,james,milner,milner,6,james milner
+171,jeremy,sarmiento morante,sarmiento,6,jeremy sarmiento morante
+172,tom,watson,watson,6,tom watson
+173,mats,wieffer,wieffer,6,mats wieffer
+174,malick,yalcouye,yalcouye,6,malick yalcouye
+175,joe,knight,knight,6,joe knight
+176,adrian,mazilu,mazilu,6,adrian mazilu
+177,andrew,moran,moran,6,andrew moran
+178,danny,welbeck,welbeck,6,danny welbeck
+179,evan,ferguson,ferguson,6,evan ferguson
+180,stefanos,tzimas,tzimas,6,stefanos tzimas
+181,charalampos,kostoulas,kostoulas,6,charalampos kostoulas
+220,robert,lynch sanchez,sanchez,7,robert lynch sanchez
+221,filip,jorgensen,jorgensen,7,filip jorgensen
+222,mike,penders,penders,7,mike penders
+223,gabriel,slonina,slonina,7,gabriel slonina
+224,marc,cucurella saseta,cucurella,7,marc cucurella saseta
+225,reece,james,james,7,reece james
+226,trevoh,chalobah,chalobah,7,trevoh chalobah
+227,levi,samuels colwill,colwill,7,levi samuels colwill
+228,malo,gusto,gusto,7,malo gusto
+229,benoit,badiashile mukinayi,bbadiashile,7,benoit badiashile mukinayi
+230,wesley,fofana,fofana,7,wesley fofana
+231,mamadou,sarr,msarr,7,mamadou sarr
+232,tosin,adarabioyo,tosin,7,tosin adarabioyo
+233,josh,acheampong,acheampong,7,josh acheampong
+234,aaron,anselmino,anselmino,7,aaron anselmino
+235,cole,palmer,palmer,7,cole palmer
+236,pedro,lomba neto,neto,7,pedro lomba neto
+237,enzo,fernandez,enzo,7,enzo fernandez
+238,estevao,almeida de oliveira goncalves,estevao,7,estevao almeida de oliveira goncalves
+239,jamie,bynoe-gittens,gittens,7,jamie bynoe-gittens
+240,christopher,nkunku,nkunku,7,christopher nkunku
+241,moises,caicedo corozo,caicedo,7,moises caicedo corozo
+243,tyrique,george,george,7,tyrique george
+244,romeo,lavia,lavia,7,romeo lavia
+245,mykhailo,mudryk,mudryk,7,mykhailo mudryk
+246,andrey,nascimento dos santos,andrey santos,7,andrey nascimento dos santos
+247,dario,luis essugo,dessugo,7,dario luis essugo
+248,kendry,paez andrade,paez,7,kendry paez andrade
+249,joao pedro,junqueira de jesus,joao pedro,7,joao pedro junqueira de jesus
+250,liam,delap,delap,7,liam delap
+251,nicolas,jackson,njackson,7,nicolas jackson
+672,jorrel,hato,hato,7,jorrel hato
+253,dean,henderson,henderson,8,dean henderson
+254,walter,benitez,benitez,8,walter benitez
+255,remi,matthews,matthews,8,remi matthews
+256,daniel,munoz mejia,munoz,8,daniel munoz mejia
+257,maxence,lacroix,lacroix,8,maxence lacroix
+258,tyrick,mitchell,mitchell,8,tyrick mitchell
+259,borna,sosa,sosa,8,borna sosa
+260,marc,guehi,guehi,8,marc guehi
+261,chris,richards,richards,8,chris richards
+262,chadi,riad dnanou,chadi riad,8,chadi riad dnanou
+263,nathaniel,clyne,clyne,8,nathaniel clyne
+264,rob,holding,holding,8,rob holding
+265,caleb,kporha,kporha,8,caleb kporha
+266,eberechi,eze,eze,8,eberechi eze
+267,ismaila,sarr,sarr,8,ismaila sarr
+268,cheick,doucoure,doucoure,8,cheick doucoure
+269,romain,esse,esse,8,romain esse
+270,will,hughes,hughes,8,will hughes
+271,daichi,kamada,kamada,8,daichi kamada
+272,jefferson,lerma solis,lerma,8,jefferson lerma solis
+273,adam,wharton,wharton,8,adam wharton
+274,asher,agbinone,agbinone,8,asher agbinone
+275,naouirou,ahamada,ahamada,8,naouirou ahamada
+276,justin,devenny,devenny,8,justin devenny
+277,malcolm,ebiowei,ebiowei,8,malcolm ebiowei
+278,jesurun,rak-sakyi,jrak-sakyi,8,jesurun rak-sakyi
+279,matheus,franca de oliveira,mfranca,8,matheus franca de oliveira
+280,david,ozoh,ozoh,8,david ozoh
+281,kaden,rodney,rodney,8,kaden rodney
+282,franco,umeh-chibueze,umeh,8,franco umeh-chibueze
+283,jean-philippe,mateta,mateta,8,jean-philippe mateta
+284,eddie,nketiah,nketiah,8,eddie nketiah
+285,odsonne,edouard,edouard,8,odsonne edouard
+286,zach,marsh,marsh,8,zach marsh
+242,kiernan,dewsbury-hall,dewsbury-hall,9,kiernan dewsbury-hall
+287,jordan,pickford,pickford,9,jordan pickford
+288,mark,travers,travers,9,mark travers
+289,harry,tyrer,tyrer,9,harry tyrer
+290,jarrad,branthwaite,branthwaite,9,jarrad branthwaite
+291,james,tarkowski,tarkowski,9,james tarkowski
+292,vitalii,mykolenko,mykolenko,9,vitalii mykolenko
+293,jake,obrien,obrien,9,jake obrien
+294,seamus,coleman,coleman,9,seamus coleman
+295,michael,keane,keane,9,michael keane
+296,nathan,patterson,patterson,9,nathan patterson
+297,roman,dixon,dixon,9,roman dixon
+298,reece,welch,welch,9,reece welch
+299,iliman,ndiaye,ndiaye,9,iliman ndiaye
+300,dwight,mcneil,mcneil,9,dwight mcneil
+301,carlos,alcaraz duran,alcaraz,9,carlos alcaraz duran
+302,idrissa gana,gueye,gana,9,idrissa gana gueye
+303,james,garner,garner,9,james garner
+304,tim,iroegbunam,iroegbunam,9,tim iroegbunam
+305,harrison,armstrong,armstrong,9,harrison armstrong
+306,callum,bates,bates,9,callum bates
+307,coby,ebere,ebere,9,coby ebere
+308,isaac,heath,heath,9,isaac heath
+309,jenson,metcalfe,metcalfe,9,jenson metcalfe
+310,thierno,barry,barry,9,thierno barry
+311,norberto bercique,gomes betuncal,beto,9,norberto bercique gomes betuncal
+312,youssef,ramalho chermiti,ychermiti,9,youssef ramalho chermiti
+313,martin,sherif,sherif,9,martin sherif
+419,jack,grealish,grealish,9,jack grealish
+667,adam,aznou,aznou,9,adam aznou
+314,bernd,leno,leno,10,bernd leno
+315,steven,benda,benda,10,steven benda
+316,antonee,robinson,robinson,10,antonee robinson
+317,joachim,andersen,andersen,10,joachim andersen
+318,calvin,bassey,bassey,10,calvin bassey
+319,timothy,castagne,castagne,10,timothy castagne
+320,issa,diop,diop,10,issa diop
+321,jorge,cuenca barreno,jcuenca,10,jorge cuenca barreno
+322,kenny,tete,tete,10,kenny tete
+323,samuel,amissah,amissah,10,samuel amissah
+324,alex,iwobi,iwobi,10,alex iwobi
+325,emile,smith rowe,smith rowe,10,emile smith rowe
+326,adama,traore diarra,adama,10,adama traore diarra
+327,andreas,hoelgebaum pereira,andreas,10,andreas hoelgebaum pereira
+328,ryan,sessegnon,sessegnon,10,ryan sessegnon
+329,harry,wilson,wilson,10,harry wilson
+330,sander,berge,berge,10,sander berge
+331,tom,cairney,cairney,10,tom cairney
+332,sasa,lukic,lukic,10,sasa lukic
+333,martial,godo,godo,10,martial godo
+334,luke,harris,harris,10,luke harris
+335,josh,king,king,10,josh king
+336,harrison,reed,reed,10,harrison reed
+337,raul,jimenez rodriguez,raul,10,raul jimenez rodriguez
+338,rodrigo,muniz carvalho,muniz,10,rodrigo muniz carvalho
+664,benjamin,lecomte,lecomte,10,benjamin lecomte
+339,illan,meslier,meslier,11,illan meslier
+340,alex,cairns,cairns,11,alex cairns
+341,karl,darlow,darlow,11,karl darlow
+342,jayden,bogle,bogle,11,jayden bogle
+343,pascal,struijk,struijk,11,pascal struijk
+344,jaka,bijol,bijol,11,jaka bijol
+345,sebastiaan,bornauw,bornauw,11,sebastiaan bornauw
+346,sam,byram,byram,11,sam byram
+347,gabriel,gudmundsson,gudmundsson,11,gabriel gudmundsson
+348,joe,rodon,rodon,11,joe rodon
+349,isaac,schmidt,schmidt,11,isaac schmidt
+350,brenden,aaronson,aaronson,11,brenden aaronson
+351,wilfried,gnonto,gnonto,11,wilfried gnonto
+352,jack,harrison,harrison,11,jack harrison
+353,daniel,james,james,11,daniel james
+354,ethan,ampadu,ampadu,11,ethan ampadu
+355,sam,greenwood,greenwood,11,sam greenwood
+356,ilia,gruev,gruev,11,ilia gruev
+357,largie,ramazani,ramazani,11,largie ramazani
+358,tanaka,ao,tanaka,11,tanaka ao
+359,charlie,crew,crew,11,charlie crew
+360,joe,gelhardt,gelhardt,11,joe gelhardt
+361,darko,gyabi,gyabi,11,darko gyabi
+362,joel,piroe,piroe,11,joel piroe
+363,patrick,bamford,bamford,11,patrick bamford
+364,mateo,joseph fernandez-regatillo,mateo joseph,11,mateo joseph fernandez-regatillo
+365,lukas,nmecha,nmecha,11,lukas nmecha
+493,sean,longstaff,longstaff,11,sean longstaff
+660,anton,stach,stach,11,anton stach
+665,lucas estella,perri,perri,11,lucas estella perri
+366,alisson,becker,abecker,12,alisson becker
+367,giorgi,mamardashvili,mamardashvili,12,giorgi mamardashvili
+368,armin,pecsi,pecsi,12,armin pecsi
+369,freddie,woodman,woodman,12,freddie woodman
+370,jeremie,frimpong,frimpong,12,jeremie frimpong
+371,milos,kerkez,kerkez,12,milos kerkez
+372,andrew,robertson,robertson,12,andrew robertson
+373,virgil,van dijk,virgil,12,virgil van dijk
+374,ibrahima,konate,konate,12,ibrahima konate
+375,conor,bradley,bradley,12,conor bradley
+376,joe,gomez,gomez,12,joe gomez
+377,konstantinos,tsimikas,tsimikas,12,konstantinos tsimikas
+378,amara,nallo,nallo,12,amara nallo
+379,rhys,williams,rwilliams,12,rhys williams
+380,calvin,ramsay,ramsay,12,calvin ramsay
+381,mohamed,salah,msalah,12,mohamed salah
+382,florian,wirtz,wirtz,12,florian wirtz
+383,luis,diaz marulanda,luis diaz,12,luis diaz marulanda
+384,cody,gakpo,gakpo,12,cody gakpo
+385,federico,chiesa,chiesa,12,federico chiesa
+386,alexis,mac allister,mac allister,12,alexis mac allister
+387,dominik,szoboszlai,szoboszlai,12,dominik szoboszlai
+388,curtis,jones,cjones,12,curtis jones
+389,harvey,elliott,elliott,12,harvey elliott
+390,ryan,gravenberch,gravenberch,12,ryan gravenberch
+391,ben,doak,doak,12,ben doak
+392,endo,wataru,endo,12,endo wataru
+393,stefan,bajcetic maquieira,bajcetic,12,stefan bajcetic maquieira
+394,james,mcconnell,mcconnell,12,james mcconnell
+395,tyler,morton,morton,12,tyler morton
+396,trey,nyoni,nyoni,12,trey nyoni
+397,darwin,nunez ribeiro,darwin,12,darwin nunez ribeiro
+398,jayden,danns,danns,12,jayden danns
+661,hugo,ekitike,ekitike,12,hugo ekitike
+182,james,trafford,trafford,13,james trafford
+399,ederson,santana de moraes,ederson m,13,ederson santana de moraes
+400,stefan,ortega moreno,ortega moreno,13,stefan ortega moreno
+401,marcus,bettinelli,bettinelli,13,marcus bettinelli
+402,rayan,ait-nouri,ait-nouri,13,rayan ait-nouri
+403,josko,gvardiol,gvardiol,13,josko gvardiol
+404,manuel,akanji,akanji,13,manuel akanji
+405,nathan,ake,ake,13,nathan ake
+406,abdukodir,khusanov,khusanov,13,abdukodir khusanov
+407,matheus,nunes,matheus n,13,matheus nunes
+408,ruben,dos santos gato alves dias,ruben,13,ruben dos santos gato alves dias
+409,john,stones,stones,13,john stones
+410,rico,lewis,lewis,13,rico lewis
+411,nico,oreilly,oreilly,13,nico oreilly
+412,vitor,de oliveira nunes dos reis,vitor reis,13,vitor de oliveira nunes dos reis
+413,omar,marmoush,marmoush,13,omar marmoush
+414,phil,foden,foden,13,phil foden
+415,savio,moreira de oliveira,savinho,13,savio moreira de oliveira
+416,bernardo,mota veiga de carvalho e silva,bernardo,13,bernardo mota veiga de carvalho e silva
+417,rayan,cherki,cherki,13,rayan cherki
+418,jeremy,doku,doku,13,jeremy doku
+420,ilkay,gundogan,gundogan,13,ilkay gundogan
+421,rodrigo rodri,hernandez cascante,rodrigo,13,rodrigo rodri hernandez cascante
+422,mateo,kovacic,kovacic,13,mateo kovacic
+423,nico,gonzalez iglesias,ngonzalez,13,nico gonzalez iglesias
+424,oscar,bobb,bobb,13,oscar bobb
+425,claudio,echeverri,echeverri,13,claudio echeverri
+426,james,mcatee,mcatee,13,james mcatee
+427,tijjani,reijnders,reijnders,13,tijjani reijnders
+428,sverre,nypan,nypan,13,sverre nypan
+429,kalvin,phillips,phillips,13,kalvin phillips
+430,erling,haaland,haaland,13,erling haaland
+119,bryan,mbeumo,mbeumo,14,bryan mbeumo
+431,altay,bayindir,bayindir,14,altay bayindir
+432,andre,onana,onana,14,andre onana
+433,elyh,harrison,harrison,14,elyh harrison
+434,tom,heaton,heaton,14,tom heaton
+435,dermot,mee,mee,14,dermot mee
+436,matthijs,de ligt,de ligt,14,matthijs de ligt
+437,lisandro,martinez,martinez,14,lisandro martinez
+438,noussair,mazraoui,mazraoui,14,noussair mazraoui
+439,diego,leon blanco,dleon,14,diego leon blanco
+440,diogo,dalot teixeira,dalot,14,diogo dalot teixeira
+441,patrick,dorgu,dorgu,14,patrick dorgu
+442,harry,maguire,maguire,14,harry maguire
+443,luke,shaw,shaw,14,luke shaw
+444,leny,yoro,yoro,14,leny yoro
+445,harry,amass,amass,14,harry amass
+446,tyler,fredricson,fredricson,14,tyler fredricson
+447,ayden,heaven,heaven,14,ayden heaven
+448,tyrell,malacia,malacia,14,tyrell malacia
+449,bruno,borges fernandes,bfernandes,14,bruno borges fernandes
+450,matheus,santos carneiro da cunha,cunha,14,matheus santos carneiro da cunha
+451,marcus,rashford,rashford,14,marcus rashford
+452,amad,diallo,amad,14,amad diallo
+453,alejandro,garnacho ferreyra,garnacho,14,alejandro garnacho ferreyra
+454,antony,dos santos,antony,14,antony dos santos
+455,mason,mount,mount,14,mason mount
+456,jadon,sancho,sancho,14,jadon sancho
+457,carlos henrique,casimiro,casemiro,14,carlos henrique casimiro
+458,kobbie,mainoo,mainoo,14,kobbie mainoo
+459,manuel,ugarte ribeiro,ugarte,14,manuel ugarte ribeiro
+460,toby,collyer,collyer,14,toby collyer
+461,jayce,fitzgerald,fitzgerald,14,jayce fitzgerald
+462,jack,fletcher,jfletcher,14,jack fletcher
+463,sekou,kone,kone,14,sekou kone
+464,jack,moorhouse,moorhouse,14,jack moorhouse
+465,rasmus,hojlund,hojlund,14,rasmus hojlund
+466,joshua,zirkzee,zirkzee,14,joshua zirkzee
+467,chido,obi,obi,14,chido obi
+468,ethan,wheatley,wheatley,14,ethan wheatley
+681,benjamin,sesko,sesko,14,benjamin sesko
+469,nick,pope,pope,15,nick pope
+471,mark,gillespie,gillespie,15,mark gillespie
+472,odysseas,vlachodimos,odysseas,15,odysseas vlachodimos
+473,lewis,hall,hall,15,lewis hall
+474,fabian,schar,schar,15,fabian schar
+475,sven,botman,botman,15,sven botman
+476,dan,burn,burn,15,dan burn
+477,tino,livramento,livramento,15,tino livramento
+478,kieran,trippier,trippier,15,kieran trippier
+479,emil,krafth,krafth,15,emil krafth
+480,jamaal,lascelles,lascelles,15,jamaal lascelles
+481,alex,murphy,amurphy,15,alex murphy
+482,harrison,ashby,ashby,15,harrison ashby
+483,miodrag,pivas,pivas,15,miodrag pivas
+484,matt,targett,targett,15,matt targett
+485,anthony,gordon,gordon,15,anthony gordon
+486,anthony,elanga,elanga,15,anthony elanga
+487,harvey,barnes,barnes,15,harvey barnes
+488,bruno,guimaraes rodriguez moura,bruno g,15,bruno guimaraes rodriguez moura
+489,jacob,murphy,jmurphy,15,jacob murphy
+490,joelinton cassio,apolinario de lira,joelinton,15,joelinton cassio apolinario de lira
+491,sandro,tonali,tonali,15,sandro tonali
+492,antonito,cordero campillo,antonito c,15,antonito cordero campillo
+494,joe,willock,willock,15,joe willock
+495,isaac,hayden,hayden,15,isaac hayden
+496,garang,kuol,kuol,15,garang kuol
+497,lewis,miley,lmiley,15,lewis miley
+498,joe,white,white,15,joe white
+499,alexander,isak,isak,15,alexander isak
+500,william,osula,osula,15,william osula
+501,sean,neave,neave,15,sean neave
+674,aaron,ramsdale,ramsdale,15,aaron ramsdale
+684,malick,thiaw,thiaw,15,malick thiaw
+502,matz,sels,sels,16,matz sels
+503,carlos miguel,dos santos pereira,cmiguel,16,carlos miguel dos santos pereira
+504,matt,turner,turner,16,matt turner
+505,nikola,milenkovic,milenkovic,16,nikola milenkovic
+506,murillo,costa dos santos,murillo,16,murillo costa dos santos
+507,ola,aina,aina,16,ola aina
+508,neco,williams,nwilliams,16,neco williams
+509,david,mota veiga teixeira do carmo,david carmo,16,david mota veiga teixeira do carmo
+510,jair,paula da cunha filho,jair cunha,16,jair paula da cunha filho
+511,felipe,rodrigues da silva,morato,16,felipe rodrigues da silva
+512,omar,richards,orichards,16,omar richards
+513,zach,abbott,abbott,16,zach abbott
+514,willy,boly,boly,16,willy boly
+515,morgan,gibbs-white,gibbs-white,16,morgan gibbs-white
+516,callum,hudson-odoi,hudson-odoi,16,callum hudson-odoi
+517,elliot,anderson,anderson,16,elliot anderson
+518,joao pedro,ferreira da silva,jota,16,joao pedro ferreira da silva
+519,nicolas,dominguez,dominguez,16,nicolas dominguez
+520,lewis,obrien,obrien,16,lewis obrien
+521,ibrahim,sangare,sangare,16,ibrahim sangare
+522,ryan,yates,yates,16,ryan yates
+523,eric,da silva moreira,da silva moreira,16,eric da silva moreira
+524,marko,stamenic,stamenic,16,marko stamenic
+525,chris,wood,wood,16,chris wood
+526,igor jesus,maciel da cruz,igor jesus,16,igor jesus maciel da cruz
+527,taiwo,awoniyi,awoniyi,16,taiwo awoniyi
+669,dan,ndoye,ndoye,16,dan ndoye
+675,angus,gunn,gunn,16,angus gunn
+252,marc,guiu paz,marc guiu,17,marc guiu paz
+528,anthony,patterson,patterson,17,anthony patterson
+529,simon,moore,moore,17,simon moore
+530,blondy,nna noukeu,nna noukeu,17,blondy nna noukeu
+531,daniel,ballard,ballard,17,daniel ballard
+532,trai,hume,hume,17,trai hume
+533,aji,alese,alese,17,aji alese
+534,joe,anderson,anderson,17,joe anderson
+535,dennis,cirkin,cirkin,17,dennis cirkin
+536,leo fuhr,hjelde,hjelde,17,leo fuhr hjelde
+537,niall,huggins,huggins,17,niall huggins
+538,zak,johnson,johnson,17,zak johnson
+539,luke,onien,onien,17,luke onien
+540,timothee,pembele,pembele,17,timothee pembele
+541,reinildo,mandava,reinildo,17,reinildo mandava
+542,jenson,seelt,seelt,17,jenson seelt
+543,simon,adingra,adingra,17,simon adingra
+544,habib,diarra,diarra,17,habib diarra
+545,patrick,roberts,roberts,17,patrick roberts
+546,milan,aleksic,aleksic,17,milan aleksic
+547,enzo,le fee,ele fee,17,enzo le fee
+548,romaine,mundle,mundle,17,romaine mundle
+549,dan,neil,neil,17,dan neil
+550,ian,poveda-ocampo,poveda,17,ian poveda-ocampo
+551,chris,rigg,rigg,17,chris rigg
+552,noah,sadiki,sadiki,17,noah sadiki
+553,chemsdine,talbi,talbi,17,chemsdine talbi
+554,abdoullah,ba,ba,17,abdoullah ba
+555,alan,browne,browne,17,alan browne
+556,pierre,ekwah elimby,ekwah,17,pierre ekwah elimby
+557,harrison,jones,hjones,17,harrison jones
+558,jay,matete,matete,17,jay matete
+559,nectarios,triantis,triantis,17,nectarios triantis
+560,wilson,isidor,isidor,17,wilson isidor
+561,eliezer,mayenda dossou,mayenda,17,eliezer mayenda dossou
+562,ahmed,abdullahi,abdullahi,17,ahmed abdullahi
+563,luis hemir,silva semedo,luis hemir,17,luis hemir silva semedo
+564,nazarii,rusyn,rusyn,17,nazarii rusyn
+668,granit,xhaka,xhaka,17,granit xhaka
+670,robin,roefs,roefs,17,robin roefs
+678,arthur,masuaku,masuaku,17,arthur masuaku
+683,omar,alderete,alderete,17,omar alderete
+565,guglielmo,vicario,vicario,18,guglielmo vicario
+566,brandon,austin,austin,18,brandon austin
+567,antonin,kinsky,kinsky,18,antonin kinsky
+568,pedro,porro sauceda,pedro porro,18,pedro porro sauceda
+569,cristian,romero,romero,18,cristian romero
+570,kevin,danso,danso,18,kevin danso
+571,ben,davies,davies,18,ben davies
+572,radu,dragusin,dragusin,18,radu dragusin
+573,djed,spence,spence,18,djed spence
+574,destiny,udogie,udogie,18,destiny udogie
+575,micky,van de ven,van de ven,18,micky van de ven
+576,ashley,phillips,phillips,18,ashley phillips
+577,takai,kota,takai,18,takai kota
+578,luka,vuskovic,vuskovic,18,luka vuskovic
+579,son,heung-min,son,18,son heung-min
+580,brennan,johnson,johnson,18,brennan johnson
+581,james,maddison,maddison,18,james maddison
+582,mohammed,kudus,kudus,18,mohammed kudus
+583,dejan,kulusevski,kulusevski,18,dejan kulusevski
+584,mathys,tel,tel,18,mathys tel
+585,rodrigo,bentancur,bentancur,18,rodrigo bentancur
+586,lucas,bergvall,bergvall,18,lucas bergvall
+587,yves,bissouma,bissouma,18,yves bissouma
+588,wilson,odobert,odobert,18,wilson odobert
+589,manor,solomon,solomon,18,manor solomon
+590,bryan,gil salvatierra,bryan,18,bryan gil salvatierra
+591,archie,gray,gray,18,archie gray
+592,mikey,moore,moore,18,mikey moore
+593,pape matar,sarr,pmsarr,18,pape matar sarr
+594,yang,min-hyeok,min-hyeok,18,yang min-hyeok
+595,callum,olusesi,olusesi,18,callum olusesi
+596,dominic,solanke-mitchell,solanke,18,dominic solanke-mitchell
+597,richarlison,de andrade,richarlison,18,richarlison de andrade
+598,will,lankshear,lankshear,18,will lankshear
+599,dane,scarlett,scarlett,18,dane scarlett
+673,joao maria,lobo alves palhares costa palhinha goncalves,jpalhinha,18,joao maria lobo alves palhares costa palhinha goncalves
+600,alphonse,areola,areola,19,alphonse areola
+601,wes,foderingham,foderingham,19,wes foderingham
+602,krisztian,hegyi,hegyi,19,krisztian hegyi
+603,el hadji malick,diouf,diouf,19,el hadji malick diouf
+604,emerson,palmieri dos santos,emerson,19,emerson palmieri dos santos
+605,maximilian,kilman,kilman,19,maximilian kilman
+606,konstantinos,mavropanos,mavropanos,19,konstantinos mavropanos
+607,nayef,aguerd,naguerd,19,nayef aguerd
+608,ollie,scarles,scarles,19,ollie scarles
+609,jean-clair,todibo,todibo,19,jean-clair todibo
+610,aaron,wan-bissaka,wan-bissaka,19,aaron wan-bissaka
+611,kaelan,casey,casey,19,kaelan casey
+612,lucas,tolentino coelho de lima,lpaqueta,19,lucas tolentino coelho de lima
+613,tomas,soucek,soucek,19,tomas soucek
+614,james,ward-prowse,ward-prowse,19,james ward-prowse
+615,crysencio,summerville,summerville,19,crysencio summerville
+616,edson,alvarez velazquez,alvarez,19,edson alvarez velazquez
+617,maxwel,cornet,cornet,19,maxwel cornet
+618,guido,rodriguez,grodriguez,19,guido rodriguez
+619,luis guilherme,lira dos santos,lguilherme,19,luis guilherme lira dos santos
+620,george,earthy,earthy,19,george earthy
+621,andy,irving,irving,19,andy irving
+622,lewis,orford,orford,19,lewis orford
+623,freddie,potts,potts,19,freddie potts
+624,jarrod,bowen,bowen,19,jarrod bowen
+625,niclas,fullkrug,fullkrug,19,niclas fullkrug
+626,callum,marshall,marshall,19,callum marshall
+659,kyle,walker-peters,walker-peters,19,kyle walker-peters
+671,callum,wilson,wilson,19,callum wilson
+679,mads,hermansen,hermansen,19,mads hermansen
+627,sam,johnstone,johnstone,20,sam johnstone
+628,jose,malheiro de sa,jose sa,20,jose malheiro de sa
+629,daniel,bentley,bentley,20,daniel bentley
+630,tom,king,king,20,tom king
+631,emmanuel,agbadou,agbadou,20,emmanuel agbadou
+632,matt,doherty,doherty,20,matt doherty
+633,hugo,bueno lopez,hbueno,20,hugo bueno lopez
+634,yerson,mosquera valdelamar,mosquera,20,yerson mosquera valdelamar
+635,rodrigo,martins gomes,rgomes,20,rodrigo martins gomes
+636,santiago,ignacio bueno,sbueno,20,santiago ignacio bueno
+637,toti,gomes,toti,20,toti gomes
+638,ki-jana,hoever,hoever,20,ki-jana hoever
+639,bastien,meupiyou menadjou,meupiyou,20,bastien meupiyou menadjou
+640,pedro,cardoso de lima,pedro lima,20,pedro cardoso de lima
+641,alfie,pond,pond,20,alfie pond
+642,hwang,hee-chan,hee chan,20,hwang hee-chan
+643,andre,trindade da costa neto,andre,20,andre trindade da costa neto
+644,jean-ricner,bellegarde,bellegarde,20,jean-ricner bellegarde
+645,fer,lopez gonzalez,fer lopez,20,fer lopez gonzalez
+646,joao victor,gomes da silva,gomes,20,joao victor gomes da silva
+647,goncalo manuel,ganchinho guedes,guedes,20,goncalo manuel ganchinho guedes
+648,marshall,munetsi,munetsi,20,marshall munetsi
+649,boubacar,traore,btraore,20,boubacar traore
+650,tawanda,chirewa,chirewa,20,tawanda chirewa
+651,tom,edozie,edozie,20,tom edozie
+652,enso,gonzalez medina,gonzalez,20,enso gonzalez medina
+653,joe,hodge,hodge,20,joe hodge
+654,jorgen,strand larsen,strand larsen,20,jorgen strand larsen
+655,fabio,soares silva,fabio silva,20,fabio soares silva
+656,sasa,kalajdzic,kalajdzic,20,sasa kalajdzic
+657,leon,chiwome,chiwome,20,leon chiwome
+658,nathan,fraser,fraser,20,nathan fraser
+663,jhon,arias,jarias,20,jhon arias
+682,david,moller wolfe,moller wolfe,20,david moller wolfe

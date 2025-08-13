@@ -8,9 +8,9 @@ from utils.constants import LAST_SEASON, SEASON
 from utils.general import get_data_path, normalize_name
 
 # Preload CSVs for the current season to improve performance
-# PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
-# TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
-# FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
+PLAYERS_IDS_DF = pd.read_csv(get_data_path(SEASON, "players_ids.csv"))
+TEAMS_IDS_DF = pd.read_csv(get_data_path(SEASON, "teams_ids.csv"))
+FIXTURES_DF = pd.read_csv(get_data_path(SEASON, "fixtures.csv"))
 
 # Preload CSVs for the last season to improve performance
 LAST_SEASON_PLAYERS_IDS_DF = pd.read_csv(get_data_path(LAST_SEASON, "players_ids.csv"))
@@ -324,10 +324,10 @@ def get_current_player_prices() -> pd.DataFrame:
     data = res.json()
     players = data["elements"]
     df = pd.DataFrame(players)[["id", "now_cost"]].copy()
-    df.rename(columns={"now_cost": "current_cost", "id": "player_id"}, inplace=True)
+    df.rename(columns={"now_cost": "current_cost", "id": "player_id"}, inplace=True) # type: ignore
 
     # Scale for prices out of 100 instead of 1000
     df["current_cost"] = df["current_cost"] / 10.0
     df["current_cost"] = df["current_cost"].astype(float)
 
-    return df
+    return df # type: ignore
