@@ -9,7 +9,7 @@ from selenium.webdriver import ChromeOptions
 from selenium.webdriver.chrome.service import Service
 
 # Add the project root directory to the system path to import utils
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(project_root)
 
 from utils.constants import (  # noqa: E402
