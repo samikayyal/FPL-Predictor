@@ -34,6 +34,7 @@ def get_past_season_ids(season: str) -> None:
     web_name_map = players_raw.set_index("id")["web_name"]
     ids_df["web_name"] = ids_df["id"].map(web_name_map)
 
+    # team id
     team_id_map = players_raw.set_index("id")["team"]
     ids_df["team"] = ids_df["id"].map(team_id_map)
 
