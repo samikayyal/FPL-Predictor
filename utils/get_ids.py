@@ -152,6 +152,7 @@ def external_team_name_to_fpl_name(name: str) -> str:
         "nottingham forest": "Nott'm Forest",
         "manchester united": "Man Utd",
         "newcastle united": "Newcastle",
+        "leeds united": "Leeds",
         # Add more mappings as needed
     }
 
@@ -228,7 +229,7 @@ def get_fbref_player_id(player_name: str, team_id: int, season: str) -> int | No
         print(f"No player found for {player_name} in {season}.")
         return None
 
-    FUZZY_THRESHOLD = 60  # mess with this
+    FUZZY_THRESHOLD = 50  # mess with this
 
     best_match = process.extractOne(
         player_name,
@@ -324,10 +325,10 @@ def get_current_player_prices() -> pd.DataFrame:
     data = res.json()
     players = data["elements"]
     df = pd.DataFrame(players)[["id", "now_cost"]].copy()
-    df.rename(columns={"now_cost": "current_cost", "id": "player_id"}, inplace=True) # type: ignore
+    df.rename(columns={"now_cost": "current_cost", "id": "player_id"}, inplace=True)  # type: ignore
 
     # Scale for prices out of 100 instead of 1000
     df["current_cost"] = df["current_cost"] / 10.0
     df["current_cost"] = df["current_cost"].astype(float)
 
-    return df # type: ignore
+    return df  # type: ignore

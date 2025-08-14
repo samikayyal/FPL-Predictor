@@ -15,7 +15,7 @@ from utils.general import get_data_path, time_function  # noqa: E402
 from utils.get_ids import get_player_name  # noqa: E402
 
 
-@time_function  # 988 seconds
+@time_function  # 526 seconds
 def scrape_gw_data_official_fpl_website():
     # player idlist
     players_ids = sorted(
