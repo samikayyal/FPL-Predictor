@@ -27,7 +27,7 @@ from utils.general import (  # noqa: E402
 )
 
 
-@time_function
+@time_function # 12 seconds
 def scrape_prem_teams_season_data(season: str) -> pd.DataFrame:
     # Get link depending on the season
     season_formatted = season.replace("-", "-20")
@@ -279,6 +279,7 @@ def scrape_prem_teams_season_data(season: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    season: str = "2024-25"
+    season: str = "2023-24"
     df = scrape_prem_teams_season_data(season)
-    df.to_csv(get_data_path(season, "teams_season.csv"))
+    os.makedirs(get_data_path(season), exist_ok=True)
+    df.to_csv(get_data_path(season, "teams_season.csv"), index=False)
